@@ -33,3 +33,7 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# AI Agents & IDE Skills
+.agents/
+.gemini/

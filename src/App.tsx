@@ -556,6 +556,8 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
       }, TIMELINE.hintIn[0])
       .to({}, { duration: 0 }, 1); // Exact 1.0 timeline anchor
 
+    window.setTimeout(() => ScrollTrigger.refresh(), 120);
+
     const progressParam = new URLSearchParams(window.location.search).get('progress');
     if (progressParam) {
       const p = parseFloat(progressParam);

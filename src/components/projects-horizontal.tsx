@@ -34,14 +34,18 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
     const canvas = canvasRef.current;
     if (!section || !track) return;
 
-    // Initialize shared vanilla JS WebGL MorphImage instance
+    // Initialize shared vanilla JS WebGL MorphImage instance safely
     if (canvas && !morphRef.current) {
-      morphRef.current = new MorphImage(canvas, PROJECT_IMAGES, {
-        noiseScale: 2.8,
-        edge: 0.2,
-        drift: 0.25,
-        duration: 850,
-      });
+      try {
+        morphRef.current = new MorphImage(canvas, PROJECT_IMAGES, {
+          noiseScale: 2.8,
+          edge: 0.2,
+          drift: 0.25,
+          duration: 850,
+        });
+      } catch (err) {
+        console.warn('WebGL MorphImage init error, skipping morph:', err);
+      }
     }
 
     const ctx = gsap.context(() => {
@@ -49,16 +53,16 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
 
       // Desktop: Horizontal Scroll Pinning (>= 900px)
       mm.add('(min-width: 900px)', () => {
-        const getDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + 80);
+        const getDistance = () => Math.max(0, track.offsetWidth - window.innerWidth + 100);
 
-        const horizontalTween = gsap.to(track, {
+        gsap.to(track, {
           x: () => -getDistance(),
           ease: 'none',
           scrollTrigger: {
             id: 'projects-horizontal-pin',
             trigger: section,
             pin: true,
-            scrub: 0.8,
+            scrub: 1,
             start: 'top top',
             end: () => `+=${getDistance() + 300}`,
             invalidateOnRefresh: true,
@@ -101,10 +105,6 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
             }
           );
         }
-
-        return () => {
-          horizontalTween.kill();
-        };
       });
 
       // Mobile / vertical stack: trigger dissolve as panels cross into view
@@ -127,21 +127,19 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
       });
     }, section);
 
-    // Refresh after fonts load to guarantee pixel-perfect scrollWidth measurements
+    // Refresh after fonts load to guarantee pixel-perfect measurements
     if (document.fonts?.ready) {
       document.fonts.ready.then(() => {
         ScrollTrigger.refresh();
       });
     }
 
-    // Observe changes to track size so horizontal scroll recalculates automatically
-    const ro = new ResizeObserver(() => {
+    const timer = window.setTimeout(() => {
       ScrollTrigger.refresh();
-    });
-    ro.observe(track);
+    }, 250);
 
     return () => {
-      ro.disconnect();
+      window.clearTimeout(timer);
       morphRef.current?.destroy();
       morphRef.current = null;
       ctx.revert();
@@ -218,18 +216,21 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
                 </div>
 
                 {/* 5. TECH STACK: Horizontal tag pills */}
-                <div className="project-panel-stack">
+                <div className="project-tags-wrap">
                   {project.techStack.map((tech) => (
-                    <span key={tech} className="project-tag-pill">
+                    <span key={tech} className="tag-pill-sm">
                       {tech}
                     </span>
                   ))}
                 </div>
 
                 {/* 6. HOW I MADE IT: 2-3 sentences of honest, personal architectural narrative */}
-                <div className="project-narrative-section">
-                  <span className="narrative-label">BEHIND THE BUILD</span>
-                  <p className="project-how-i-made-it">{project.howIMadeIt}</p>
+                <div className="project-process-section">
+                  <div className="process-header">
+                    <span className="process-indicator-dot" aria-hidden="true" />
+                    <span className="process-label">BEHIND THE BUILD</span>
+                  </div>
+                  <p className="process-narrative">{project.howIMadeIt}</p>
                 </div>
 
                 {/* 7. FOOTER LINKS: Code & Live links */}

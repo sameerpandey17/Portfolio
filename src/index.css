@@ -1588,7 +1588,6 @@ body.is-debug .covered-stage {
   flex-direction: column;
   justify-content: center;
   background: var(--paper);
-  overflow: hidden;
 }
 
 /* Transitional Cue Header */
@@ -1673,6 +1672,8 @@ body.is-debug .covered-stage {
   z-index: 2;
   display: flex;
   flex-wrap: nowrap;
+  width: max-content;
+  flex-shrink: 0;
   gap: clamp(24px, 4vw, 56px);
   padding: 0 clamp(20px, 5vw, 80px);
   will-change: transform;
