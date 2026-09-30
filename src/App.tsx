@@ -29,7 +29,6 @@ import {
   ZOOM_END,
 } from '@/config';
 import { portfolioContent } from '@/content';
-import { MonogramMark } from '@/components/monogram-mark';
 import { TagRow } from '@/components/tag-row';
 import { SectionHeading } from '@/components/section-heading';
 import { ScribbleLink } from '@/components/scribble-link';
@@ -149,10 +148,7 @@ function HeroLaptopScreen({
 
       {/* 2. LAPTOP SCREEN WORKSPACE & HERO STACK */}
       <div className="laptop-screen-content" ref={titleBlockRef}>
-        {/* Subtle background ambient monogram watermark */}
-        <div className="laptop-bg-watermark" aria-hidden="true">
-          <MonogramMark size={110} color="var(--cobalt)" borderWidth={1.5} />
-        </div>
+
 
         {/* Eyebrow Pill */}
         <div className="title-row title-row-eyebrow">
@@ -757,7 +753,7 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
         <div className={`loader${loaded ? ' is-hidden' : ''}`} aria-live="polite">
           <div className="loader-inner">
             <div className="loader-brand">
-              <MonogramMark size={44} className="loader-monogram" />
+              <span className="loader-title font-display">SAMEER PANDEY</span>
             </div>
             <div className="loader-label">
               <span>Loading the frames</span>
@@ -778,7 +774,6 @@ function SiteNav() {
   return (
     <header className="site-nav" aria-label="Main site navigation">
       <div className="site-brand">
-        <MonogramMark size={32} className="site-brand-monogram" />
         <a className="site-mark" href="#hero" aria-label="Sameer Pandey Home">
           <span className="site-mark-name">{portfolioContent.profile.name}</span>
         </a>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './section-heading';
 import { ScribbleLink } from './scribble-link';
-import { MonogramMark } from './monogram-mark';
 import { portfolioContent } from '../content';
 
 export const ContactSection: React.FC = () => {
@@ -103,7 +102,6 @@ export const ContactSection: React.FC = () => {
         {/* Site Footer */}
         <footer className="site-footer">
           <div className="footer-left">
-            <MonogramMark size={28} />
             <div className="footer-credits">
               <span className="footer-brand font-display">Sameer Pandey</span>
               <span className="footer-copy">© 2026 · AI & Full-Stack Developer</span>
