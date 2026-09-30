@@ -3,9 +3,15 @@
 export const FRAME_WIDTH  = 1280;
 export const FRAME_HEIGHT = 720;
 export const FRAME_RATE   = 24;
-export const FRAME_COUNT  = 240;
-export const FRAME_PATH   = (index: number) =>
-  `/assets/frames/frame_${String(Math.min(FRAME_COUNT, Math.max(1, index + 1))).padStart(4, '0')}.webp`;
+export const TOTAL_HERO_FRAMES = 80; // 80 frames (~20fps equivalent) reduces initial network transfer from 32MB to ~10MB for instant loading
+export const FRAME_COUNT  = TOTAL_HERO_FRAMES;
+export const GET_HERO_FRAME_PATH = (index: number) => {
+  const clamped = Math.max(0, Math.min(TOTAL_HERO_FRAMES - 1, index));
+  // Maps 0..79 evenly across the 240 available rendered WebP source frames
+  const originalFrameNum = Math.round(clamped * (239 / (TOTAL_HERO_FRAMES - 1))) + 1;
+  return `/assets/frames/frame_${String(originalFrameNum).padStart(4, '0')}.webp`;
+};
+export const FRAME_PATH = GET_HERO_FRAME_PATH;
 
 export const SCROLL_LENGTH = '+=600%'; // keeps the final-frame hold unhurried
 export const ZOOM_END      = 0.6;      // 0–ZOOM_END scrubs camera; ZOOM_END–1 holds last frame

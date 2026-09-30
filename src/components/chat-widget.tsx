@@ -40,6 +40,7 @@ export function ChatWidget() {
   const openTimeRef = useRef<number>(0);
   const isTypingRef = useRef<boolean>(false);
   isTypingRef.current = isTyping;
+  const isPointerInsideChatRef = useRef<boolean>(false);
 
   // Sync to in-memory session cache
   useEffect(() => {
@@ -63,6 +64,7 @@ export function ChatWidget() {
   // Scroll-aware auto-close:
   // If the chat panel is OPEN and the user scrolls the page (in either direction past a threshold),
   // automatically collapse back to the launcher while preserving exact conversation state in memory.
+  // NEVER close if the user's cursor or touch is actively inside the chatbot window.
   useEffect(() => {
     if (!isOpen) return;
 
@@ -70,6 +72,12 @@ export function ChatWidget() {
     openTimeRef.current = Date.now();
 
     const handleWindowScroll = () => {
+      // If user's pointer/touch is inside the chat window, they are actively reading or scrolling the chat!
+      if (isPointerInsideChatRef.current) {
+        openScrollYRef.current = window.scrollY;
+        return;
+      }
+
       // Grace period: ignore scrolls in first 350ms after opening
       if (Date.now() - openTimeRef.current < 350) return;
 
@@ -77,8 +85,8 @@ export function ChatWidget() {
       if (isTypingRef.current) return;
 
       const delta = Math.abs(window.scrollY - openScrollYRef.current);
-      // Threshold (35px) prevents minor touch bounce or incidental micro-scrolls from closing
-      if (delta > 35) {
+      // Threshold (50px) prevents minor touch bounce or incidental micro-scrolls from closing
+      if (delta > 50) {
         if (chatBodyRef.current) {
           sessionChatState.scrollTop = chatBodyRef.current.scrollTop;
         }
@@ -250,6 +258,10 @@ export function ChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="chat-heading"
+          onMouseEnter={() => { isPointerInsideChatRef.current = true; }}
+          onMouseLeave={() => { isPointerInsideChatRef.current = false; }}
+          onTouchStart={() => { isPointerInsideChatRef.current = true; }}
+          onTouchEnd={() => { isPointerInsideChatRef.current = false; }}
         >
           {/* Header */}
           <div className="sp-chat-header">

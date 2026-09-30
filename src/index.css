@@ -188,7 +188,8 @@ body.has-custom-cursor textarea {
   overflow: hidden;
   background: var(--paper);
 }
-.hero-frame {
+.hero-frame,
+.hero-frame-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -196,6 +197,7 @@ body.has-custom-cursor textarea {
   object-fit: cover;
   background: var(--paper-deep);
   image-rendering: auto;
+  pointer-events: none;
 }
 
 /* ── SITE NAV ────────────────────────────────────────────────────────────── */
@@ -2530,7 +2532,7 @@ body.is-debug .covered-stage {
 /* ── SAMEER AI CHATBOT WIDGET (IMPECCABLE CRAFT & ROBOT LOGO) ──────────── */
 .sp-chat-root {
   position: fixed;
-  bottom: 22px;
+  bottom: clamp(72px, 8.5vh, 92px);
   right: 24px;
   z-index: 9999;
   font-family: var(--body);
@@ -2681,6 +2683,7 @@ body.hero-unpinned .sp-chat-trigger,
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  overscroll-behavior: contain;
   animation: chat-entrance 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes chat-entrance {
@@ -2800,6 +2803,7 @@ body.hero-unpinned .sp-chat-trigger,
 .sp-chat-body {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 18px 16px;
   display: flex;
   flex-direction: column;

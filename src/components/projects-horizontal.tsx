@@ -53,7 +53,12 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
 
       // Desktop: Horizontal Scroll Pinning (>= 900px)
       mm.add('(min-width: 900px)', () => {
-        const getDistance = () => Math.max(0, track.offsetWidth - window.innerWidth + 100);
+        const getDistance = () => {
+          const scrollW = track.scrollWidth;
+          const offsetW = track.offsetWidth;
+          const totalW = Math.max(scrollW, offsetW);
+          return Math.max(0, totalW - window.innerWidth + 80);
+        };
 
         gsap.to(track, {
           x: () => -getDistance(),
@@ -64,9 +69,10 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
             pin: true,
             scrub: 1,
             start: 'top top',
-            end: () => `+=${getDistance() + 300}`,
+            end: () => `+=${getDistance()}`,
             invalidateOnRefresh: true,
             anticipatePin: 1,
+            refreshPriority: 1,
             onUpdate: (self) => {
               if (progressBarRef.current) {
                 progressBarRef.current.style.transform = `scaleX(${self.progress})`;
@@ -76,7 +82,7 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
               const numPanels = projects.length;
               const activeIdx = Math.min(
                 numPanels - 1,
-                Math.max(0, Math.floor(self.progress * numPanels + 0.12))
+                Math.max(0, Math.floor(self.progress * numPanels + 0.08))
               );
 
               if (activeIdx !== currentIdxRef.current) {
@@ -136,9 +142,15 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
 
     const timer = window.setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 250);
+    }, 300);
+
+    const onWindowResize = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('resize', onWindowResize);
 
     return () => {
+      window.removeEventListener('resize', onWindowResize);
       window.clearTimeout(timer);
       morphRef.current?.destroy();
       morphRef.current = null;

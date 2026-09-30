@@ -200,8 +200,9 @@ function CinematicHero() {
   const laptopRef = useRef<HTMLDivElement>(null);
   const watermarkCoverRef = useRef<HTMLDivElement>(null);
   const resumeHintRef = useRef<HTMLParagraphElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const framesRef = useRef<(HTMLImageElement | null)[]>([]);
   const frameIndexRef = useRef(0);
-  const [frameIndex, setFrameIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [frameFailed, setFrameFailed] = useState(false);
@@ -355,27 +356,47 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
 
   useEffect(() => {
     let cancelled = false;
-    let loadedFrames = 0;
-    const images = Array.from({ length: FRAME_COUNT }, (_, index) => {
-      const image = new Image();
-      image.decoding = 'async';
-      image.src = FRAME_PATH(index);
-      image.onload = () => {
-        if (cancelled) return;
-        loadedFrames += 1;
-        if (loadedFrames === 1) setLoadPercent(12);
-        else if (loadedFrames % 8 === 0) setLoadPercent(Math.min(99, Math.round((loadedFrames / FRAME_COUNT) * 100)));
-      };
-      return image;
+    let loadedCount = 0;
+    framesRef.current = new Array(FRAME_COUNT).fill(null);
+
+    const drawInitialFrame = (img: HTMLImageElement) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+      }
+    };
+
+    const loadPromises = Array.from({ length: FRAME_COUNT }, (_, index) => {
+      return new Promise<void>((resolve) => {
+        const image = new Image();
+        image.decoding = 'async';
+        image.src = FRAME_PATH(index);
+        image.onload = () => {
+          if (cancelled) return resolve();
+          framesRef.current[index] = image;
+          loadedCount += 1;
+          if (index === 0) {
+            drawInitialFrame(image);
+            setLoadPercent(16);
+          } else if (loadedCount % 4 === 0) {
+            setLoadPercent(Math.min(99, Math.round((loadedCount / FRAME_COUNT) * 100)));
+          }
+          resolve();
+        };
+        image.onerror = () => {
+          resolve();
+        };
+      });
     });
 
-    Promise.all(images.map((image) => new Promise<void>((resolve) => {
-      image.onload = () => resolve();
-      image.onerror = () => resolve();
-    }))).then(() => {
+    Promise.all(loadPromises).then(() => {
       if (!cancelled) {
         setLoadPercent(100);
         setLoaded(true);
+        const f0 = framesRef.current[0];
+        if (f0) drawInitialFrame(f0);
         window.setTimeout(() => ScrollTrigger.refresh(), 150);
       }
     });
@@ -383,9 +404,11 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
     const timeout = window.setTimeout(() => {
       if (!cancelled) {
         setLoaded(true);
+        const f0 = framesRef.current[0];
+        if (f0) drawInitialFrame(f0);
         window.setTimeout(() => ScrollTrigger.refresh(), 150);
       }
-    }, 6000);
+    }, 4500);
 
     updateContentBox();
     return () => {
@@ -454,13 +477,19 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
         pin: true,
         scrub: true,
         anticipatePin: 1,
+        refreshPriority: 10,
         onUpdate: (self) => {
           const nextProgress = self.progress;
           const zoomProgress = clamp(nextProgress / ZOOM_END);
-          const nextFrame = Math.round(zoomProgress * (FRAME_COUNT - 1));
+          const nextFrame = Math.min(FRAME_COUNT - 1, Math.round(zoomProgress * (FRAME_COUNT - 1)));
           if (nextFrame !== frameIndexRef.current) {
             frameIndexRef.current = nextFrame;
-            setFrameIndex(nextFrame);
+            const img = framesRef.current[nextFrame];
+            const canvas = canvasRef.current;
+            if (img && canvas) {
+              const ctx = canvas.getContext('2d');
+              if (ctx) ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+            }
           }
 
           // Direct DOM opacity control on laptop screen
@@ -503,6 +532,15 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
           if (nav) {
             nav.classList.toggle('has-brand', isUnpinned);
             nav.classList.toggle('is-scrolled', isUnpinned);
+          }
+          const zoomProgress = clamp(self.progress / ZOOM_END);
+          const nextFrame = Math.min(FRAME_COUNT - 1, Math.round(zoomProgress * (FRAME_COUNT - 1)));
+          frameIndexRef.current = nextFrame;
+          const img = framesRef.current[nextFrame] || framesRef.current[0];
+          const canvas = canvasRef.current;
+          if (img && canvas) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
           }
           if (laptopRef.current && !debug) {
             const laptopOpacity = clamp((self.progress - 0.58) / 0.10, 0, 1);
@@ -571,9 +609,13 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
         timeline.progress(p);
         setProgress(p);
         const zProgress = clamp(p / ZOOM_END);
-        const targetFrame = Math.round(zProgress * (FRAME_COUNT - 1));
+        const targetFrame = Math.min(FRAME_COUNT - 1, Math.round(zProgress * (FRAME_COUNT - 1)));
         frameIndexRef.current = targetFrame;
-        setFrameIndex(targetFrame);
+        const img = framesRef.current[targetFrame] || framesRef.current[0];
+        if (img && canvasRef.current) {
+          const ctx = canvasRef.current.getContext('2d');
+          if (ctx) ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+        }
       }, 100);
     }
 
@@ -607,12 +649,12 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
             <img src={VIDEO_ASSETS.fallback} alt="" />
           </div>
         ) : (
-          <img
-            className="hero-frame"
-            src={FRAME_PATH(frameIndex)}
-            alt=""
+          <canvas
+            ref={canvasRef}
+            className="hero-frame-canvas"
+            width={FRAME_WIDTH}
+            height={FRAME_HEIGHT}
             aria-hidden="true"
-            onError={() => setFrameFailed(true)}
           />
         )}
 
@@ -826,9 +868,7 @@ function Home() {
 
         {/* ── 04 PROJECTS SECTION (Horizontal Pinning Centerpiece) ─────────── */}
         <HalftoneDivider />
-        <div className="projects-scroll-wrapper">
-          <ProjectsHorizontal projects={portfolioContent.projects} />
-        </div>
+        <ProjectsHorizontal projects={portfolioContent.projects} />
 
         {/* ── 05 ACHIEVEMENTS SECTION (Progressive Timeline) ───────────────── */}
         <HalftoneDivider />
