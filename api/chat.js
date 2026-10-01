@@ -140,26 +140,97 @@ export default async function handler(req, res) {
     { role: 'user', content: message },
   ];
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+let cachedModelId = null;
 
+async function resolveGroqModel(apiKey) {
+  if (process.env.GROQ_MODEL) {
+    return process.env.GROQ_MODEL;
+  }
+  if (cachedModelId) {
+    return cachedModelId;
+  }
+
+  try {
+    const listRes = await fetch('https://api.groq.com/openai/v1/models', {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (listRes.ok) {
+      const listData = await listRes.json();
+      const modelIds = (listData.data || []).map((m) => m.id);
+      console.log('[Groq API] Available models for this key:', modelIds);
+
+      const candidates = [
+        'llama-3.3-70b-versatile',
+        'llama-3.1-8b-instant',
+        'llama3-70b-8192',
+        'llama3-8b-8192',
+        'openai/gpt-oss-120b',
+        'openai/gpt-oss-20b',
+        'mixtral-8x7b-32768',
+        'gemma2-9b-it',
+      ];
+
+      for (const candidate of candidates) {
+        if (modelIds.includes(candidate)) {
+          cachedModelId = candidate;
+          return candidate;
+        }
+      }
+
+      const anyChatModel = modelIds.find((id) => !id.includes('guard') && !id.includes('whisper'));
+      if (anyChatModel) {
+        cachedModelId = anyChatModel;
+        return anyChatModel;
+      }
+    }
+  } catch (err) {
+    console.warn('[Groq API] Failed to fetch models list, using fallback:', err);
+  }
+
+  return 'llama-3.1-8b-instant';
+}
+
+async function callGroqWithModel(apiKey, model, messages) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+  try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
+        model,
         messages,
         temperature: 0.5,
         max_tokens: 450,
       }),
       signal: controller.signal,
     });
-
     clearTimeout(timeoutId);
+    return response;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+
+  try {
+    let chosenModel = await resolveGroqModel(apiKey);
+    let response = await callGroqWithModel(apiKey, chosenModel, messages);
+
+    // If model_not_found (404), clear cache and try fallback model
+    if (!response.ok && response.status === 404) {
+      const errText = await response.text();
+      console.warn(`[Vercel Function /api/chat] Model ${chosenModel} returned 404 (${errText}), retrying with fallback...`);
+      cachedModelId = null;
+
+      const fallbackModel = chosenModel === 'llama-3.1-8b-instant' ? 'llama3-8b-8192' : 'llama-3.1-8b-instant';
+      chosenModel = fallbackModel;
+      response = await callGroqWithModel(apiKey, chosenModel, messages);
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -180,7 +251,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       response: reply,
       source: 'groq_llm',
-      model: 'llama-3.3-70b-versatile',
+      model: chosenModel,
     });
   } catch (error) {
     console.error('[Vercel Function /api/chat] Error calling Groq:', error);

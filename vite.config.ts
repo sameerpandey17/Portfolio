@@ -34,14 +34,16 @@ function localChatApiPlugin() {
               return;
             }
 
-            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            const preferredModel = env.GROQ_MODEL || process.env.GROQ_MODEL || 'llama-3.1-8b-instant';
+
+            let response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`,
               },
               body: JSON.stringify({
-                model: 'llama-3.3-70b-versatile',
+                model: preferredModel,
                 messages: [
                   {
                     role: 'system',
@@ -55,11 +57,32 @@ function localChatApiPlugin() {
               }),
             });
 
+            if (!response.ok && response.status === 404) {
+              const fallbackModel = preferredModel === 'llama-3.1-8b-instant' ? 'llama3-8b-8192' : 'llama-3.1-8b-instant';
+              response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                  model: fallbackModel,
+                  messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    ...(Array.isArray(conversationHistory) ? conversationHistory.slice(-4) : []),
+                    { role: 'user', content: message },
+                  ],
+                  temperature: 0.5,
+                  max_tokens: 450,
+                }),
+              });
+            }
+
             if (!response.ok) throw new Error('Groq upstream error');
             const data = await response.json();
             const reply = data.choices?.[0]?.message?.content?.trim();
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ response: reply || 'Ready to assist!', source: 'groq-llama-3.3-70b' }));
+            res.end(JSON.stringify({ response: reply || 'Ready to assist!', source: 'groq_llm' }));
           } catch (err) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({
