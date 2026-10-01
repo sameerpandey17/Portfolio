@@ -19,6 +19,9 @@ tsconfig.tsbuildinfo
 # Archives and Large Artifacts
 *.zip
 *.tar.gz
+archive/
+scratch/
+*.log
 
 # System Files
 .DS_Store

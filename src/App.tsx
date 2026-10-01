@@ -2,6 +2,8 @@ import {
   type CSSProperties,
   type ReactNode,
   type RefObject,
+  lazy,
+  Suspense,
   useEffect,
   useMemo,
   useRef,
@@ -29,7 +31,6 @@ import {
   ZOOM_END,
 } from '@/config';
 import { portfolioContent } from '@/content';
-import { TagRow } from '@/components/tag-row';
 import { SectionHeading } from '@/components/section-heading';
 import { ScribbleLink } from '@/components/scribble-link';
 import { HalftoneDivider } from '@/components/halftone-divider';
@@ -40,11 +41,14 @@ import { ProjectsHorizontal } from '@/components/projects-horizontal';
 import { Timeline } from '@/components/timeline';
 import { WhatsNextSection } from '@/components/whats-next-section';
 import { ContactSection } from '@/components/contact-section';
-import { ChatWidget } from '@/components/chat-widget';
+const ChatWidget = lazy(() => import('@/components/chat-widget').then(m => ({ default: m.ChatWidget })));
 import { Route, Router as WouterRouter, Switch, useLocation } from 'wouter';
 
 const queryClient = new QueryClient();
 gsap.registerPlugin(ScrollTrigger);
+(window as any).ScrollTrigger = ScrollTrigger;
+
+
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -89,7 +93,7 @@ function ChatbotWatermarkLauncher({
     >
       <div className="watermark-bot-inner">
         <img
-          src="/assets/chatbot-avatar.png"
+          src="/assets/chatbot-avatar.webp"
           alt="Sameer AI Chatbot"
           className="watermark-bot-img"
         />
@@ -195,15 +199,18 @@ function HeroLaptopScreen({
 
 function CinematicHero() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const introCopyRef = useRef<HTMLDivElement>(null);
   const titleBlockRef = useRef<HTMLDivElement>(null);
   const laptopRef = useRef<HTMLDivElement>(null);
   const watermarkCoverRef = useRef<HTMLDivElement>(null);
   const resumeHintRef = useRef<HTMLParagraphElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ctx2dRef = useRef<CanvasRenderingContext2D | null>(null);
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
   const frameIndexRef = useRef(0);
-  const [progress, setProgress] = useState(0);
+  const progressRef = useRef(0);
+  const [debugProgress, setDebugProgress] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [frameFailed, setFrameFailed] = useState(false);
   const [loadPercent, setLoadPercent] = useState(4);
@@ -341,14 +348,14 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
   };
 
   const updateContentBox = () => {
-    const hero = heroRef.current;
-    if (!hero) return;
-    const scale = Math.max(hero.clientWidth / FRAME_WIDTH, hero.clientHeight / FRAME_HEIGHT);
+    const pin = pinRef.current;
+    if (!pin) return;
+    const scale = Math.max(pin.clientWidth / FRAME_WIDTH, pin.clientHeight / FRAME_HEIGHT);
     const contentWidth = FRAME_WIDTH * scale;
     const contentHeight = FRAME_HEIGHT * scale;
     setStage({
-      left: (hero.clientWidth - contentWidth) / 2,
-      top: (hero.clientHeight - contentHeight) / 2,
+      left: (pin.clientWidth - contentWidth) / 2,
+      top: (pin.clientHeight - contentHeight) / 2,
       width: contentWidth,
       height: contentHeight,
     });
@@ -359,10 +366,20 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
     let loadedCount = 0;
     framesRef.current = new Array(FRAME_COUNT).fill(null);
 
+    const getContext = () => {
+      if (!ctx2dRef.current && canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d', { alpha: false });
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'medium';
+          ctx2dRef.current = ctx;
+        }
+      }
+      return ctx2dRef.current;
+    };
+
     const drawInitialFrame = (img: HTMLImageElement) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
+      const ctx = getContext();
       if (ctx) {
         ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
       }
@@ -429,38 +446,34 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
   }, [loaded]);
 
   useEffect(() => {
+    updateContentBox();
+    const pin = pinRef.current;
+    let ro: ResizeObserver | null = null;
+    if (pin && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => {
+        updateContentBox();
+      });
+      ro.observe(pin);
+    }
+    let resizeTimer: number | undefined;
     const onResize = () => {
       updateContentBox();
-      ScrollTrigger.refresh();
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 200);
     };
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  useEffect(() => {
-    const previousOverflow = document.documentElement.style.overflow;
-    if (!loaded) document.documentElement.style.overflow = 'hidden';
-    else {
-      document.documentElement.style.overflow = previousOverflow;
-      window.setTimeout(() => ScrollTrigger.refresh(), 0);
-    }
     return () => {
-      document.documentElement.style.overflow = previousOverflow;
+      ro?.disconnect();
+      window.clearTimeout(resizeTimer);
+      window.removeEventListener('resize', onResize);
     };
-  }, [loaded]);
+  }, []);
 
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return undefined;
-    const lenis = new Lenis({
-      autoRaf: false,
-    });
-    const onLenisScroll = () => ScrollTrigger.update();
-    const onTick = (time: number) => lenis.raf(time * 1000);
-    lenis.on('scroll', onLenisScroll);
-    gsap.ticker.add(onTick);
-    gsap.ticker.lagSmoothing(0);
-
     const titleRows = titleBlockRef.current
       ? Array.from(titleBlockRef.current.querySelectorAll<HTMLElement>('.title-line-inner'))
       : [];
@@ -468,88 +481,7 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
       ? Array.from(titleBlockRef.current.querySelectorAll<HTMLElement>('.hero-tag-pill'))
       : [];
 
-    const timeline = gsap.timeline({
-      scrollTrigger: {
-        id: 'hero-trigger',
-        trigger: hero,
-        start: 'top top',
-        end: SCROLL_LENGTH,
-        pin: true,
-        scrub: true,
-        anticipatePin: 1,
-        refreshPriority: 10,
-        onUpdate: (self) => {
-          const nextProgress = self.progress;
-          const zoomProgress = clamp(nextProgress / ZOOM_END);
-          const nextFrame = Math.min(FRAME_COUNT - 1, Math.round(zoomProgress * (FRAME_COUNT - 1)));
-          if (nextFrame !== frameIndexRef.current) {
-            frameIndexRef.current = nextFrame;
-            const img = framesRef.current[nextFrame];
-            const canvas = canvasRef.current;
-            if (img && canvas) {
-              const ctx = canvas.getContext('2d');
-              if (ctx) ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-            }
-          }
-
-          // Direct DOM opacity control on laptop screen
-          if (laptopRef.current && !debug) {
-            const laptopOpacity = clamp((nextProgress - 0.58) / 0.10, 0, 1);
-            laptopRef.current.style.opacity = `${laptopOpacity}`;
-            laptopRef.current.style.pointerEvents = laptopOpacity > 0.5 ? 'auto' : 'none';
-          }
-
-          const isUnpinned = nextProgress >= 0.995;
-          document.body.classList.toggle('hero-unpinned', isUnpinned);
-          const nav = document.querySelector('.site-nav');
-          if (nav) {
-            nav.classList.toggle('has-brand', isUnpinned);
-            nav.classList.toggle('is-scrolled', isUnpinned);
-          }
-        },
-        onLeave: () => {
-          document.body.classList.add('hero-unpinned');
-          const nav = document.querySelector('.site-nav');
-          if (nav) {
-            nav.classList.add('has-brand', 'is-scrolled');
-          }
-          if (laptopRef.current && !debug) {
-            laptopRef.current.style.opacity = '1';
-            laptopRef.current.style.pointerEvents = 'auto';
-          }
-        },
-        onEnterBack: () => {
-          document.body.classList.remove('hero-unpinned');
-          const nav = document.querySelector('.site-nav');
-          if (nav) {
-            nav.classList.remove('has-brand', 'is-scrolled');
-          }
-        },
-        onRefresh: (self) => {
-          const isUnpinned = self.progress >= 0.995;
-          document.body.classList.toggle('hero-unpinned', isUnpinned);
-          const nav = document.querySelector('.site-nav');
-          if (nav) {
-            nav.classList.toggle('has-brand', isUnpinned);
-            nav.classList.toggle('is-scrolled', isUnpinned);
-          }
-          const zoomProgress = clamp(self.progress / ZOOM_END);
-          const nextFrame = Math.min(FRAME_COUNT - 1, Math.round(zoomProgress * (FRAME_COUNT - 1)));
-          frameIndexRef.current = nextFrame;
-          const img = framesRef.current[nextFrame] || framesRef.current[0];
-          const canvas = canvasRef.current;
-          if (img && canvas) {
-            const ctx = canvas.getContext('2d');
-            if (ctx) ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-          }
-          if (laptopRef.current && !debug) {
-            const laptopOpacity = clamp((self.progress - 0.58) / 0.10, 0, 1);
-            laptopRef.current.style.opacity = `${laptopOpacity}`;
-            laptopRef.current.style.pointerEvents = laptopOpacity > 0.5 ? 'auto' : 'none';
-          }
-        },
-      },
-    });
+    const timeline = gsap.timeline({ paused: true });
 
     timeline
       .to(introCopyRef.current, {
@@ -594,38 +526,126 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
       }, TIMELINE.hintIn[0])
       .to({}, { duration: 0 }, 1); // Exact 1.0 timeline anchor
 
-    window.setTimeout(() => ScrollTrigger.refresh(), 120);
+    let lastUnpinned = false;
+    let lastLaptopOpacity = -1;
+    const navEl = document.querySelector('.site-nav');
+
+    const heroST = ScrollTrigger.create({
+      id: 'hero-trigger',
+      trigger: hero,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: true,
+      refreshPriority: 1,
+      onUpdate: (self) => {
+        const nextProgress = self.progress;
+        timeline.progress(nextProgress);
+        progressRef.current = nextProgress;
+        if (debug) setDebugProgress(nextProgress);
+
+        const zoomProgress = clamp(nextProgress / ZOOM_END);
+        const nextFrame = Math.min(FRAME_COUNT - 1, Math.round(zoomProgress * (FRAME_COUNT - 1)));
+        if (nextFrame !== frameIndexRef.current) {
+          frameIndexRef.current = nextFrame;
+          const img = framesRef.current[nextFrame];
+          const ctx = ctx2dRef.current;
+          if (img && ctx) {
+            ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+          }
+        }
+
+        // Direct DOM opacity control on laptop screen (batched, avoid redundant style sets)
+        if (laptopRef.current && !debug) {
+          const laptopOpacity = clamp((nextProgress - 0.58) / 0.10, 0, 1);
+          if (
+            Math.abs(laptopOpacity - lastLaptopOpacity) > 0.005 ||
+            (laptopOpacity === 0 && lastLaptopOpacity !== 0) ||
+            (laptopOpacity === 1 && lastLaptopOpacity !== 1)
+          ) {
+            lastLaptopOpacity = laptopOpacity;
+            laptopRef.current.style.opacity = `${laptopOpacity}`;
+            laptopRef.current.style.pointerEvents = laptopOpacity > 0.5 ? 'auto' : 'none';
+          }
+        }
+
+        const isUnpinned = nextProgress >= 0.995;
+        if (isUnpinned !== lastUnpinned) {
+          lastUnpinned = isUnpinned;
+          document.body.classList.toggle('hero-unpinned', isUnpinned);
+          if (navEl) {
+            navEl.classList.toggle('has-brand', isUnpinned);
+            navEl.classList.toggle('is-scrolled', isUnpinned);
+          }
+        }
+      },
+      onLeave: () => {
+        document.body.classList.add('hero-unpinned');
+        const nav = document.querySelector('.site-nav');
+        if (nav) {
+          nav.classList.add('has-brand', 'is-scrolled');
+        }
+        if (laptopRef.current && !debug) {
+          laptopRef.current.style.opacity = '1';
+          laptopRef.current.style.pointerEvents = 'auto';
+        }
+      },
+      onEnterBack: () => {
+        document.body.classList.remove('hero-unpinned');
+        const nav = document.querySelector('.site-nav');
+        if (nav) {
+          nav.classList.remove('has-brand', 'is-scrolled');
+        }
+      },
+      onRefresh: (self) => {
+        timeline.progress(self.progress);
+        const isUnpinned = self.progress >= 0.995;
+        document.body.classList.toggle('hero-unpinned', isUnpinned);
+        const nav = document.querySelector('.site-nav');
+        if (nav) {
+          nav.classList.toggle('has-brand', isUnpinned);
+          nav.classList.toggle('is-scrolled', isUnpinned);
+        }
+        const zoomProgress = clamp(self.progress / ZOOM_END);
+        const nextFrame = Math.min(FRAME_COUNT - 1, Math.round(zoomProgress * (FRAME_COUNT - 1)));
+        frameIndexRef.current = nextFrame;
+        const img = framesRef.current[nextFrame] || framesRef.current[0];
+        const ctx = ctx2dRef.current;
+        if (img && ctx) {
+          ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+        }
+        if (laptopRef.current && !debug) {
+          const laptopOpacity = clamp((self.progress - 0.58) / 0.10, 0, 1);
+          laptopRef.current.style.opacity = `${laptopOpacity}`;
+          laptopRef.current.style.pointerEvents = laptopOpacity > 0.5 ? 'auto' : 'none';
+        }
+      },
+    });
 
     const progressParam = new URLSearchParams(window.location.search).get('progress');
     if (progressParam) {
       const p = parseFloat(progressParam);
       window.setTimeout(() => {
-        const st = timeline.scrollTrigger;
-        if (st) {
-          const targetY = st.start + (st.end - st.start) * p;
-          window.scrollTo(0, targetY);
-          st.scroll(targetY);
-        }
+        const targetY = heroST.start + (heroST.end - heroST.start) * p;
+        window.scrollTo(0, targetY);
+        heroST.scroll(targetY);
         timeline.progress(p);
-        setProgress(p);
+        progressRef.current = p;
+        if (debug) setDebugProgress(p);
         const zProgress = clamp(p / ZOOM_END);
         const targetFrame = Math.min(FRAME_COUNT - 1, Math.round(zProgress * (FRAME_COUNT - 1)));
         frameIndexRef.current = targetFrame;
         const img = framesRef.current[targetFrame] || framesRef.current[0];
-        if (img && canvasRef.current) {
-          const ctx = canvasRef.current.getContext('2d');
-          if (ctx) ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
+        const ctx = ctx2dRef.current;
+        if (img && ctx) {
+          ctx.drawImage(img, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);
         }
       }, 100);
     }
 
     return () => {
       document.body.classList.remove('hero-unpinned');
-      timeline.scrollTrigger?.kill(true);
+      heroST.kill(true);
       timeline.kill();
-      lenis.off('scroll', onLenisScroll);
-      gsap.ticker.remove(onTick);
-      lenis.destroy();
     };
   }, []);
 
@@ -636,13 +656,13 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
     height: stage.height,
   }), [stage]);
 
-  const phase = progress < ZOOM_END ? 'ZOOM' : 'HOLD';
+  const phase = debugProgress < ZOOM_END ? 'ZOOM' : 'HOLD';
   const activeLaptop = debug ? debugValues.laptop : LAPTOP_RECT;
   const activeWatermark = debug ? debugValues.watermark : WATERMARK_COVER;
 
   return (
     <section className="hero-scroll" ref={heroRef} aria-label="Cinematic portfolio introduction">
-      <div className="hero-pin">
+      <div className="hero-pin" ref={pinRef}>
 
         {frameFailed ? (
           <div className="room-fallback" aria-label="Illustrated room fallback">
@@ -739,7 +759,7 @@ export const WATERMARK_COVER = { x: ${debugValues.watermark.x}, y: ${debugValues
             <div className="debug-panel-head">
               <span className="debug-panel-title">HERO CALIBRATION // ?debug=1</span>
               <span className="debug-panel-status">
-                {phase} · {(progress * 100).toFixed(0)}%
+                {phase} · {(debugProgress * 100).toFixed(0)}%
               </span>
             </div>
 
@@ -849,14 +869,48 @@ function SiteNav() {
 }
 
 function Home() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.5,
+    });
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const onTick = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(onTick);
+    gsap.ticker.lagSmoothing(500, 33);
+
+    const handleRefresh = () => {
+      lenis.resize();
+    };
+    ScrollTrigger.addEventListener('refresh', handleRefresh);
+
+    (window as any).__lenis = lenis;
+
+    return () => {
+      ScrollTrigger.removeEventListener('refresh', handleRefresh);
+      gsap.ticker.remove(onTick);
+      lenis.destroy();
+      delete (window as any).__lenis;
+    };
+  }, []);
+
   return (
     <>
       <CustomCursor />
       <SiteNav />
       <main className="portfolio-page">
-        <div className="hero-scroll-wrapper">
-          <CinematicHero />
-        </div>
+        {/* ── 01 HERO SECTION (STICKY SCRUB) ─────────────────────────────── */}
+        <CinematicHero />
 
         {/* ── 02 ABOUT SECTION ────────────────────────────────────────────── */}
         <HalftoneDivider />
@@ -894,7 +948,9 @@ function Home() {
         <ContactSection />
       </main>
       {/* ── INTERACTIVE CHATBOT (LAYER 1 INSTANT Q&A + LAYER 2 GROQ LLM FALLBACK) ── */}
-      <ChatWidget />
+      <Suspense fallback={null}>
+        <ChatWidget />
+      </Suspense>
     </>
   );
 }

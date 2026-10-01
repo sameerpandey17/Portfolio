@@ -48,113 +48,124 @@ export const ProjectsHorizontal: React.FC<ProjectsHorizontalProps> = ({ projects
       }
     }
 
-    const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
-      // Desktop: Horizontal Scroll Pinning (>= 900px)
-      mm.add('(min-width: 900px)', () => {
-        const getDistance = () => {
-          const scrollW = track.scrollWidth;
-          const offsetW = track.offsetWidth;
-          const totalW = Math.max(scrollW, offsetW);
-          return Math.max(0, totalW - window.innerWidth + 80);
-        };
+    // Desktop & Tablet: Horizontal Scroll Pinning (>= 768px)
+    mm.add('(min-width: 768px)', () => {
+      const getDistance = () => {
+        const panels = track.querySelectorAll<HTMLElement>('.project-panel');
+        let totalPanelsWidth = 0;
+        panels.forEach(p => {
+          totalPanelsWidth += p.offsetWidth;
+        });
+        const gap = 36;
+        const padding = 120;
+        const estimatedTrackWidth = totalPanelsWidth + Math.max(0, panels.length - 1) * gap + padding;
+        const scrollW = Math.max(track.scrollWidth, estimatedTrackWidth);
+        const viewportW = window.innerWidth;
+        return Math.max(400, scrollW - viewportW + 100);
+      };
 
-        gsap.to(track, {
-          x: () => -getDistance(),
-          ease: 'none',
-          scrollTrigger: {
-            id: 'projects-horizontal-pin',
-            trigger: section,
-            pin: true,
-            scrub: 1,
-            start: 'top top',
-            end: () => `+=${getDistance()}`,
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
-            refreshPriority: 1,
-            onUpdate: (self) => {
-              if (progressBarRef.current) {
-                progressBarRef.current.style.transform = `scaleX(${self.progress})`;
-              }
+      const tween = gsap.to(track, {
+        x: () => -getDistance(),
+        ease: 'none',
+        scrollTrigger: {
+          id: 'projects-horizontal-pin',
+          trigger: section,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          scrub: 1,
+          refreshPriority: -1,
+          start: 'top top',
+          end: () => `+=${getDistance()}`,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (progressBarRef.current) {
+              progressBarRef.current.style.transform = `scaleX(${self.progress})`;
+            }
 
-              // Calculate active panel index from scroll progress
-              const numPanels = projects.length;
-              const activeIdx = Math.min(
-                numPanels - 1,
-                Math.max(0, Math.floor(self.progress * numPanels + 0.08))
-              );
+            // Calculate active panel index from scroll progress
+            const numPanels = projects.length;
+            const activeIdx = Math.min(
+              numPanels - 1,
+              Math.max(0, Math.floor(self.progress * numPanels + 0.08))
+            );
 
-              if (activeIdx !== currentIdxRef.current) {
-                currentIdxRef.current = activeIdx;
-                morphRef.current?.goTo(activeIdx);
-              }
+            if (activeIdx !== currentIdxRef.current) {
+              currentIdxRef.current = activeIdx;
+              morphRef.current?.goTo(activeIdx);
+            }
+          },
+        },
+      });
+
+      // Transitional cue before entering section
+      if (cueRef.current) {
+        gsap.fromTo(
+          cueRef.current,
+          { x: 60, opacity: 0 },
+          {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 88%',
+              toggleActions: 'play none none reverse',
             },
+          }
+        );
+      }
+
+      return () => {
+        tween.kill();
+      };
+    });
+
+    // Mobile / vertical stack: trigger dissolve as panels cross into view
+    mm.add('(max-width: 767px)', () => {
+      const panels = track.querySelectorAll<HTMLElement>('.project-panel');
+      panels.forEach((panel, index) => {
+        ScrollTrigger.create({
+          trigger: panel,
+          start: 'top 60%',
+          onEnter: () => {
+            currentIdxRef.current = index;
+            morphRef.current?.goTo(index);
+          },
+          onEnterBack: () => {
+            currentIdxRef.current = index;
+            morphRef.current?.goTo(index);
           },
         });
-
-        // Transitional cue before entering section
-        if (cueRef.current) {
-          gsap.fromTo(
-            cueRef.current,
-            { x: 80, opacity: 0 },
-            {
-              x: 0,
-              opacity: 1,
-              duration: 0.9,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: section,
-                start: 'top 88%',
-                toggleActions: 'play none none reverse',
-              },
-            }
-          );
-        }
       });
+    });
 
-      // Mobile / vertical stack: trigger dissolve as panels cross into view
-      mm.add('(max-width: 899px)', () => {
-        const panels = track.querySelectorAll<HTMLElement>('.project-panel');
-        panels.forEach((panel, index) => {
-          ScrollTrigger.create({
-            trigger: panel,
-            start: 'top 60%',
-            onEnter: () => {
-              currentIdxRef.current = index;
-              morphRef.current?.goTo(index);
-            },
-            onEnterBack: () => {
-              currentIdxRef.current = index;
-              morphRef.current?.goTo(index);
-            },
-          });
-        });
-      });
-    }, section);
-
-    // Refresh after fonts load to guarantee pixel-perfect measurements
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(() => {
-        ScrollTrigger.refresh();
-      });
-    }
-
+    // Refresh after layout and fonts settle — single deferred refresh only
     const timer = window.setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 300);
+      (window as any).__lenis?.resize();
+    }, 400);
 
+    let resizeTimer: number | undefined;
     const onWindowResize = () => {
-      ScrollTrigger.refresh();
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        ScrollTrigger.refresh();
+        (window as any).__lenis?.resize();
+      }, 200);
     };
     window.addEventListener('resize', onWindowResize);
 
     return () => {
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', onWindowResize);
       window.clearTimeout(timer);
       morphRef.current?.destroy();
       morphRef.current = null;
-      ctx.revert();
+      mm.revert();
     };
   }, [projects.length]);
 

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Inter+Tight:ital,wght@0,300..800;1,300..800&display=swap');
+/* Fonts loaded via <link> in index.html — no CSS @import to avoid render-blocking chain */
 
 :root {
   --paper: #f0e9dd;
@@ -57,6 +57,7 @@ body {
   color: var(--ink);
   font-family: var(--body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
 }
 button, a { font: inherit; }
 button { cursor: pointer; }
@@ -65,7 +66,6 @@ a { color: inherit; }
 /* ── PAPER GRAIN OVERLAY ──────────────────────────────────────────────────── */
 .portfolio-page {
   position: relative;
-  overflow: clip;
   background: var(--paper);
 }
 .portfolio-page::after {
@@ -180,9 +180,16 @@ body.has-custom-cursor textarea {
   position: relative;
   width: 100%;
 }
-.hero-scroll { position: relative; height: 100svh; }
-.hero-pin {
+.hero-scroll {
   position: relative;
+  z-index: 50;
+  height: 700svh;
+  isolation: isolate;
+}
+.hero-pin {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   height: 100svh;
   min-height: 620px;
   overflow: hidden;
@@ -1568,28 +1575,20 @@ body.is-debug .covered-stage {
 /* ── 04 PROJECTS SECTION (HORIZONTAL SCROLL CENTERPIECE) ─────────────────── */
 .projects-section-container {
   position: relative;
+  z-index: 1;
   width: 100%;
-  background: transparent;
+  background: var(--paper);
 }
-@media (min-width: 900px) {
+
+@media (min-width: 768px) {
   .projects-section-container {
     height: 100vh;
+    max-height: 100vh;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-}
-
-/* Projects Section Container */
-.projects-section-container {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background: var(--paper);
 }
 
 /* Transitional Cue Header */
@@ -1641,10 +1640,12 @@ body.is-debug .covered-stage {
 .projects-viewport {
   position: relative;
   width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
   display: flex;
   align-items: center;
-  padding: 24px 0;
+  padding: clamp(12px, 2vh, 24px) 0;
 }
 .projects-morph-backdrop {
   position: absolute;
@@ -1676,38 +1677,41 @@ body.is-debug .covered-stage {
   flex-wrap: nowrap;
   width: max-content;
   flex-shrink: 0;
-  gap: clamp(24px, 4vw, 56px);
-  padding: 0 clamp(20px, 5vw, 80px);
+  gap: clamp(24px, 3.5vw, 48px);
+  padding: 0 clamp(24px, 5vw, 80px);
   will-change: transform;
 }
 
 /* Project Panel Card */
 .project-panel {
-  flex: 0 0 clamp(620px, 72vw, 920px);
-  max-width: 90vw;
+  flex: 0 0 clamp(560px, 66vw, 860px);
+  max-width: 86vw;
+  height: 100%;
+  max-height: min(680px, calc(100vh - 145px));
   display: flex;
 }
 .project-panel-inner {
   position: relative;
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: clamp(28px, 4vw, 44px);
+  padding: clamp(20px, 2.5vh, 34px) clamp(22px, 3vw, 38px);
   background: rgba(240, 233, 221, 0.95);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1.5px solid var(--line);
   box-shadow: 0 10px 32px rgba(30, 58, 138, 0.07);
-  gap: 16px;
+  gap: clamp(8px, 1.3vh, 15px);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.25s ease,
               box-shadow 0.25s ease;
 }
 .project-panel-inner:hover {
-  transform: translateY(-5px);
+  transform: translateY(-4px);
   border-color: var(--cobalt);
-  box-shadow: 0 18px 46px rgba(30, 58, 138, 0.15);
+  box-shadow: 0 16px 42px rgba(30, 58, 138, 0.14);
 }
 
 /* Corner Ticks (Viewfinder Reticle Focus Animation) */
@@ -2447,23 +2451,28 @@ body.is-debug .covered-stage {
 @media (max-width: 899px) {
   .site-nav-links { display: none; }
   .title-block { max-width: 75% !important; }
+}
 
-  /* Mobile fallback for Projects section: vertical stack */
+@media (max-width: 767px) {
+  /* Mobile fallback for Projects section: clean vertical stack */
   .projects-section-container {
-    height: auto !important;
+    height: auto;
+    padding: 24px 0 40px;
   }
   .projects-viewport {
     overflow: visible;
+    padding: 16px 0;
   }
   .projects-horizontal-track {
     flex-direction: column;
     padding: 0 clamp(16px, 4vw, 24px);
     width: 100%;
-    transform: none !important;
+    gap: 24px;
   }
   .project-panel {
     flex: 0 0 100%;
     max-width: 100%;
+    max-height: none;
   }
   .projects-progress-track {
     display: none;
@@ -2474,24 +2483,10 @@ body.is-debug .covered-stage {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .projects-section-container {
-    height: auto !important;
-  }
-  .projects-viewport {
-    overflow: visible;
-  }
-  .projects-horizontal-track {
-    flex-direction: column;
-    padding: 0 clamp(16px, 4vw, 24px);
-    width: 100%;
-    transform: none !important;
-  }
-  .project-panel {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-  .projects-progress-track {
-    display: none;
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

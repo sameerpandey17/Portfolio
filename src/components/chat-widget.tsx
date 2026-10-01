@@ -235,7 +235,7 @@ export function ChatWidget() {
           ) : (
             <div className="chat-trigger-bot-wrapper">
               <img
-                src="/assets/chatbot-avatar.png"
+                src="/assets/chatbot-avatar.webp"
                 alt=""
                 className="chat-trigger-bot-img"
               />
@@ -255,6 +255,7 @@ export function ChatWidget() {
         <div
           className="sp-chat-window"
           id="sp-chat-window"
+          data-lenis-prevent
           role="dialog"
           aria-modal="true"
           aria-labelledby="chat-heading"
@@ -268,7 +269,7 @@ export function ChatWidget() {
             <div className="sp-chat-header-brand">
               <div className="sp-chat-avatar-container">
                 <img
-                  src="/assets/chatbot-avatar.png"
+                  src="/assets/chatbot-avatar.webp"
                   alt="Sameer AI Robot Logo"
                   className="sp-chat-header-avatar"
                 />
@@ -319,7 +320,7 @@ export function ChatWidget() {
           </div>
 
           {/* Messages Stream */}
-          <div className="sp-chat-body" ref={chatBodyRef} onScroll={handleChatBodyScroll}>
+          <div className="sp-chat-body" ref={chatBodyRef} data-lenis-prevent onScroll={handleChatBodyScroll}>
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -328,7 +329,7 @@ export function ChatWidget() {
                 {msg.role === 'assistant' && (
                   <div className="msg-avatar" aria-hidden="true">
                     <img
-                      src="/assets/chatbot-avatar.png"
+                      src="/assets/chatbot-avatar.webp"
                       alt=""
                       className="msg-avatar-img"
                     />
@@ -382,7 +383,7 @@ export function ChatWidget() {
               <div className="sp-chat-message-row msg-assistant msg-typing">
                 <div className="msg-avatar" aria-hidden="true">
                   <img
-                    src="/assets/chatbot-avatar.png"
+                    src="/assets/chatbot-avatar.webp"
                     alt=""
                     className="msg-avatar-img"
                   />

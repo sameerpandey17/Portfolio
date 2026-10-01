@@ -1,7 +1,7 @@
 // All overlay coordinates are percentages of the covered 1280 × 720 content box.
 // Use ?debug=1 + arrow keys to nudge values; press 1 = title, 2 = watermark.
-export const FRAME_WIDTH  = 1280;
-export const FRAME_HEIGHT = 720;
+export const FRAME_WIDTH  = 1152; // Lowered by 10% (1152x648) for faster decoding and lighter GPU canvas memory
+export const FRAME_HEIGHT = 648;
 export const FRAME_RATE   = 24;
 export const TOTAL_HERO_FRAMES = 80; // 80 frames (~20fps equivalent) reduces initial network transfer from 32MB to ~10MB for instant loading
 export const FRAME_COUNT  = TOTAL_HERO_FRAMES;
@@ -48,7 +48,6 @@ export const TIMELINE = {
 
 // ── VIDEO_ASSETS ─────────────────────────────────────────────────────────────
 export const VIDEO_ASSETS = {
-  mp4:      '/assets/hero_scrub.mp4',
   poster:   '/assets/poster.webp',
   fallback: '/assets/poster.webp',      // clean room poster fallback
   myPhoto:  '/assets/my-photo.jpg',     // user photo placed in photo frame when PHOTO_OVERLAY = true
