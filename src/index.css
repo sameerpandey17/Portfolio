@@ -2246,11 +2246,14 @@ body.is-debug .covered-stage {
   background: transparent;
 }
 .contact-card {
-  padding: clamp(32px, 6vw, 64px);
+  padding: clamp(24px, 6vw, 64px);
   background: var(--paper-card);
   display: flex;
   flex-direction: column;
   gap: 32px;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .contact-headline-box {
   display: flex;
@@ -2277,16 +2280,20 @@ body.is-debug .covered-stage {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  padding: 24px clamp(20px, 3.5vw, 36px);
+  gap: 18px;
+  padding: 20px clamp(16px, 3.5vw, 36px);
   border: 1.5px solid var(--cobalt);
   background: rgba(240, 233, 221, 0.95);
   border-radius: 4px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .email-display-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
+  max-width: 100%;
 }
 .email-label {
   font: 700 10px/1 var(--body);
@@ -2295,10 +2302,14 @@ body.is-debug .covered-stage {
 }
 .email-link {
   color: var(--cobalt);
-  font-size: var(--text-xl);
+  font-size: clamp(1rem, 3.2vw, var(--text-xl));
   font-weight: 800;
   text-decoration: none;
   transition: color 0.18s ease;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  display: inline-block;
 }
 .email-link:hover {
   color: var(--red);
@@ -2519,7 +2530,48 @@ body.is-debug .covered-stage {
   .value-scrim { font-size: 0.88rem; line-height: 1.35; }
   .resume-hint { left: 50%; right: auto; transform: translateX(-50%); bottom: 20px; font-size: 9.5px; padding: 6px 16px; }
   .about-metrics-grid { grid-template-columns: 1fr; }
-  .contact-email-bar { flex-direction: column; align-items: flex-start; }
+  .contact-card {
+    padding: clamp(20px, 5vw, 32px) clamp(14px, 4vw, 24px);
+    gap: 22px;
+  }
+  .contact-statement {
+    font-size: clamp(1.4rem, 6vw, 1.85rem);
+  }
+  .contact-email-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 16px 14px;
+  }
+  .email-display-group {
+    width: 100%;
+    min-width: 0;
+  }
+  .email-link {
+    font-size: clamp(0.86rem, 4.4vw, 1.18rem);
+    line-height: 1.35;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+  }
+  .copy-email-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 14px;
+    box-sizing: border-box;
+  }
+  .contact-details-row {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 0;
+  }
+  .contact-socials-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .socials-links-group {
+    gap: 12px 18px;
+  }
   .site-footer { flex-direction: column; align-items: flex-start; }
   .footer-meta { align-items: flex-start; }
 }

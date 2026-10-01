@@ -280,7 +280,6 @@ export const portfolioContent = {
     location: 'Pune, Maharashtra, India',
     remote: 'Open to Remote Worldwide',
     socials: [
-      { label: 'Portfolio', url: '#hero', icon: 'portfolio' },
       { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sameer-pandey17/', icon: 'linkedin' },
       { label: 'GitHub', url: 'https://github.com/sameerpandey17', icon: 'github' },
       { label: 'Email', url: 'mailto:sameerpandey17nov@gmail.com', icon: 'email' },
