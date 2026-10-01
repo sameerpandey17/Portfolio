@@ -185,7 +185,7 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'github link',
       'linkedin profile'
     ],
-    answer: "You can reach me directly via email at sameerpandey17nov@gmail.com or by phone at +91 6204570289. My portfolio also provides direct links to my resume PDF, GitHub, and LinkedIn profiles in the navigation bar."
+    answer: "You can reach me directly via email at sameerpandey17nov@gmail.com or by phone at +91 6204570289. You can also explore my code on GitHub (https://github.com/sameerpandey17) and connect on LinkedIn (https://www.linkedin.com/in/sameer-pandey17/)."
   },
 
   // 9. Hackathons & Milestones

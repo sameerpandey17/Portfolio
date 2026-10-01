@@ -14,6 +14,8 @@ Your role is to answer questions from recruiters, engineering managers, and coll
 - Location: Pune, Maharashtra, India (Open to Remote opportunities worldwide, and on-site roles in Pune, Bangalore, Mumbai, etc.)
 - Contact Email: sameerpandey17nov@gmail.com
 - Contact Phone: +91 6204570289
+- GitHub: https://github.com/sameerpandey17
+- LinkedIn: https://www.linkedin.com/in/sameer-pandey17/
 - Status: Actively seeking AI Engineering, Backend Development, or Full-Stack Developer internships and collaborative roles.
 
 ### TECHNICAL SPECIALIZATION & STACK:

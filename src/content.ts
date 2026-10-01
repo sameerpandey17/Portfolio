@@ -48,8 +48,8 @@ export const portfolioContent = {
     remote: 'Open to Remote',
     email: 'sameerpandey17nov@gmail.com',
     phone: '+91 6204570289',
-    linkedin: '[LinkedIn URL — I\'ll provide]',
-    github: '[GitHub URL — I\'ll provide]',
+    linkedin: 'https://www.linkedin.com/in/sameer-pandey17/',
+    github: 'https://github.com/sameerpandey17',
     resumeUrl: '/assets/Sameer_Pandey_Resume.pdf',
   },
 
@@ -269,8 +269,8 @@ export const portfolioContent = {
     location: 'Pune, Maharashtra, India',
     remote: 'Open to Remote Worldwide',
     socials: [
-      { label: 'LinkedIn', url: '[LinkedIn URL — I\'ll provide]', icon: 'linkedin' },
-      { label: 'GitHub', url: '[GitHub URL — I\'ll provide]', icon: 'github' },
+      { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sameer-pandey17/', icon: 'linkedin' },
+      { label: 'GitHub', url: 'https://github.com/sameerpandey17', icon: 'github' },
       { label: 'Email', url: 'mailto:sameerpandey17nov@gmail.com', icon: 'email' },
       { label: 'Resume PDF', url: '/assets/Sameer_Pandey_Resume.pdf', icon: 'resume' },
     ],
