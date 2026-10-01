@@ -152,7 +152,7 @@ export const portfolioContent = {
       howIMadeIt:
         'Pharma QA engineers spend hours transcribing manufacturing floor incidents into rigid QMS forms with zero room for error. I built a LangGraph agent pipeline that extracts unstructured incident reports into validated deviation schemas, diffing only modified fields so users never lose context. The hardest architectural choice was dual-mode persistence — running full PostgreSQL in Docker Compose while keeping an instant SQLite fallback so QA workflows never stall if database containers hiccup.',
       links: [
-        { label: 'Code', url: 'https://github.com/sameerpandey17/AIVOA' },
+        { label: 'Code', url: 'https://github.com/sameerpandey17/deviation-bot' },
         { label: 'Live', url: '#' },
       ],
       iconType: 'aivoa',
@@ -223,7 +223,7 @@ export const portfolioContent = {
       howIMadeIt:
         'RL agents are notorious reward-hackers: in my early training runs, the policy figured out it could hit calorie goals by chugging oil and raw sugar while ignoring protein altogether. I had to restructure the reward manifold with diminishing returns and multiplicative barrier functions so the agent had to balance micronutrients and cost in equilibrium. Testing policy actions through a custom Gradio dashboard shaved days off debugging reward curves.',
       links: [
-        { label: 'Code', url: 'https://github.com/sameerpandey17/NutriSync' },
+        { label: 'Code', url: 'https://github.com/sameerpandey17/nutrisync-openenv' },
       ],
       iconType: 'nutrisync',
     },

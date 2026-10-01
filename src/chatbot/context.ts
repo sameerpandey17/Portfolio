@@ -32,7 +32,7 @@ You answer questions from recruiters, engineering managers, and fellow builders 
 ### THE 4 CORE PROJECTS (LEAD WITH AIVOA):
 1. AIVOA — AI-Powered Deviation Intake & Copilot (QMS for Pharma Manufacturing), 2026:
    - Tech: Python, FastAPI, LangGraph, Groq LLMs, React 18, Redux Toolkit, PostgreSQL/SQLite, Docker Compose
-   - GitHub: https://github.com/sameerpandey17/AIVOA
+   - GitHub: https://github.com/sameerpandey17/deviation-bot
    - Highlights: Full-stack AI copilot letting QA teams log, edit, and question manufacturing deviations via chat, text, or docs (PDF, DOCX, XLSX, TXT, OCR images). LangGraph agent pipeline (intent router → Groq extraction → Pydantic validation → merge & diff). Dual-mode persistence via SQLAlchemy (PostgreSQL in Docker Compose + automatic SQLite fallback) with a split-pane React UI and 10 acceptance-scenario E2E test suite.
 
 2. VisionLink — Real-Time Vision & Multimodal Streaming Pipeline:
@@ -47,7 +47,7 @@ You answer questions from recruiters, engineering managers, and fellow builders 
 
 4. NutriSync — RL-Driven Indian Diet OpenEnv Environment:
    - Tech: Python, Gymnasium, PyTorch, OpenEnv Specification, FastAPI
-   - GitHub: https://github.com/sameerpandey17/NutriSync
+   - GitHub: https://github.com/sameerpandey17/nutrisync-openenv
    - Highlights: OpenEnv-compliant reinforcement learning environment for personalized dietary optimization. 50-item Indian ingredient database and 15-component reward function. Kill-switch logic instantly zeros score upon allergen breach or budget violation.
 
 *(Note: "Package Scanner / PackDrishti" is no longer active on the resume or portfolio — do not reference it.)*

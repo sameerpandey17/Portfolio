@@ -36,7 +36,7 @@
 ### 1. AIVOA — AI-Powered Deviation Intake & Copilot (QMS for Pharma Manufacturing), 2026
 - **Domain**: Pharma QMS & AI Agents
 - **Stack**: Python, FastAPI, LangGraph, Groq LLMs, React 18, Redux Toolkit, PostgreSQL/SQLite, Docker Compose
-- **GitHub**: https://github.com/sameerpandey17/AIVOA
+- **GitHub**: https://github.com/sameerpandey17/deviation-bot
 - **Architecture Highlights**:
   - A full-stack AI copilot letting QA teams log, edit, and question manufacturing deviations via chat, pasted text, or uploaded documents (PDF, DOCX, XLSX, TXT, scanned images via OCR).
   - A LangGraph agent pipeline (intent router → Groq LLM extraction → Pydantic validation → merge & diff) that updates only changed form fields, flags missing fields, and generates a risk assessment.
@@ -65,7 +65,7 @@
 ### 4. NutriSync — RL-Driven Indian Diet OpenEnv Environment
 - **Domain**: RL-Driven Indian Diet OpenEnv Environment
 - **Stack**: Python, Gymnasium, PyTorch, OpenEnv Specification, FastAPI
-- **GitHub**: https://github.com/sameerpandey17/NutriSync
+- **GitHub**: https://github.com/sameerpandey17/nutrisync-openenv
 - **Architecture Highlights**:
   - OpenEnv-compliant reinforcement learning environment for personalized dietary optimization.
   - 50-item Indian ingredient database with micronutrient, macronutrient, and glycemic load tracking.
