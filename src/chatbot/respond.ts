@@ -74,7 +74,7 @@ export function matchLayer1(query: string): Layer1MatchResult {
     }
 
     // 2. High-value specific entity match (e.g. project names)
-    const entityMatches = ['visionlink', 'calorupee', 'nutrisync', 'packdrishti', 'drishti'];
+    const entityMatches = ['aivoa', 'visionlink', 'calorupee', 'nutrisync'];
     for (const entity of entityMatches) {
       if (rawNormalized.includes(entity) && entry.id.includes(entity)) {
         score = Math.max(score, 0.92);

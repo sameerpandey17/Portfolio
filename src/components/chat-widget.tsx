@@ -3,11 +3,11 @@ import { sendChatMessage, ChatMessage } from '../chatbot/client';
 
 const SUGGESTED_CHIPS = [
   { label: "What's his tech stack?", tier: 'Layer 1' },
-  { label: 'Tell me about NutriSync', tier: 'Layer 1' },
-  { label: 'Education & CGPA?', tier: 'Layer 1' },
+  { label: 'Tell me about AIVOA', tier: 'Layer 1' },
   { label: 'Why should I hire Sameer?', tier: 'Layer 1' },
-  { label: 'How does he design low-latency pipelines?', tier: 'Layer 2' },
-  { label: 'What team culture does he thrive in?', tier: 'Layer 2' },
+  { label: 'Pineapple on pizza?', tier: 'Layer 1' },
+  { label: 'What is your villain origin story?', tier: 'Layer 1' },
+  { label: 'How does he design low-latency pipelines?', tier: 'Layer 1' },
 ];
 
 const INITIAL_GREETING: ChatMessage = {

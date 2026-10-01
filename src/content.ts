@@ -14,7 +14,7 @@ export interface ProjectHighlight {
   techStack: string[];
   howIMadeIt: string;
   links: { label: string; url: string }[];
-  iconType: 'visionlink' | 'calorupee' | 'nutrisync' | 'package-scanner';
+  iconType: 'aivoa' | 'visionlink' | 'calorupee' | 'nutrisync';
 }
 
 export interface SkillCategory {
@@ -50,18 +50,20 @@ export const portfolioContent = {
     phone: '+91 6204570289',
     linkedin: 'https://www.linkedin.com/in/sameer-pandey17/',
     github: 'https://github.com/sameerpandey17',
+    portfolio: '#hero',
+    languagesSpoken: 'English, Hindi',
     resumeUrl: '/assets/Sameer_Pandey_Resume.pdf',
   },
 
   heroTags: [
     'Python',
     'FastAPI',
+    'LangGraph',
     'React',
     'TypeScript',
     'PostgreSQL',
-    'Redis Pub/Sub',
     'Docker Compose',
-    'RL & AI Systems',
+    'Redis Pub/Sub',
   ] as const,
 
   about: {
@@ -79,34 +81,34 @@ export const portfolioContent = {
       title: 'Languages & Tools',
       items: [
         'Python',
-        'JavaScript',
-        'TypeScript',
-        'SQL',
-        'C++',
+        'FastAPI',
+        'REST API',
+        'PostgreSQL',
         'Git',
         'Docker',
-        'PostgreSQL',
         'Redis',
-        'REST APIs',
+        'SQLAlchemy',
+        'SEO',
       ],
     },
     {
       title: 'Frameworks & Platforms',
       items: [
-        'FastAPI',
         'React',
-        'Next.js',
-        'Docker Compose',
-        'Redis Pub/Sub',
-        'WebSocket',
+        'TypeScript',
+        'Redux Toolkit',
+        'LangGraph',
         'Nginx',
+        'Docker Compose',
+        'WebSocket',
+        'Redis Pub/Sub',
       ],
     },
     {
       title: 'Technical Areas',
       items: [
         'AI/ML Integration',
-        'Computer Vision & OCR',
+        'LLM Agents',
         'Full-Stack Development',
         'System Design',
         'RL Environments',
@@ -115,21 +117,51 @@ export const portfolioContent = {
     {
       title: 'Currently Sharpening',
       items: [
-        'RAG',
-        'Vector Databases',
         'Data Structures & Algorithms',
       ],
       isSharpening: true,
-      note: 'Active growth: Designing high-recall RAG pipelines with vector databases (embeddings & hybrid search), and daily algorithmic problem solving (graph & tree traversals, dynamic programming).',
+      note: 'Active practice: closing the gap on classic interview problem-solving (graph & tree traversals, dynamic programming) deliberately and daily.',
+    },
+    {
+      title: 'Languages Spoken',
+      items: [
+        'English',
+        'Hindi',
+      ],
     },
   ] as SkillCategory[],
 
   projects: [
     {
-      id: 'visionlink',
+      id: 'aivoa',
       number: '01',
-      title: 'VisionLink',
+      title: 'AIVOA',
       eyebrow: 'REC // 01',
+      category: 'AI-Powered QMS Deviation Intake & Copilot',
+      whatItIs:
+        'A full-stack AI copilot letting pharma manufacturing QA teams log, edit, and question manufacturing deviations via chat, pasted text, or uploaded documents.',
+      feature: {
+        heading: 'LangGraph Agent & Dual Persistence',
+        body: [
+          'A LangGraph agent pipeline (intent router → Groq LLM extraction → Pydantic validation → merge & diff) that updates only changed form fields, flags missing fields, and generates a risk assessment.',
+          'Dual-mode persistence via SQLAlchemy: PostgreSQL through Docker Compose with automatic SQLite fallback, plus a split-pane React UI with live field highlighting and client-side file validation (PDF, DOCX, XLSX, TXT, scanned images via OCR).',
+          'Validated against 10 acceptance scenarios via an automated end-to-end test suite plus manual browser testing.',
+        ],
+      },
+      techStack: ['Python', 'FastAPI', 'LangGraph', 'Groq LLMs', 'React 18', 'Redux Toolkit', 'PostgreSQL', 'Docker Compose'],
+      howIMadeIt:
+        'Pharma QA engineers spend hours transcribing manufacturing floor incidents into rigid QMS forms with zero room for error. I built a LangGraph agent pipeline that extracts unstructured incident reports into validated deviation schemas, diffing only modified fields so users never lose context. The hardest architectural choice was dual-mode persistence — running full PostgreSQL in Docker Compose while keeping an instant SQLite fallback so QA workflows never stall if database containers hiccup.',
+      links: [
+        { label: 'Code', url: 'https://github.com/sameerpandey17/AIVOA' },
+        { label: 'Live', url: '#' },
+      ],
+      iconType: 'aivoa',
+    },
+    {
+      id: 'visionlink',
+      number: '02',
+      title: 'VisionLink',
+      eyebrow: 'REC // 02',
       category: 'Real-Time Vision & Stream Broker',
       whatItIs:
         'Instant facial emotion telemetry streamed directly from browser webcams to concurrent client dashboards without dropping frames.',
@@ -151,9 +183,9 @@ export const portfolioContent = {
     },
     {
       id: 'calorupee',
-      number: '02',
+      number: '03',
       title: 'CaloRupee',
-      eyebrow: 'REC // 02',
+      eyebrow: 'REC // 03',
       category: 'AI Budget & Nutrition Engine',
       whatItIs:
         'A hyper-localized meal planning engine that solves daily calorie and macro targets strictly under a user-defined rupee budget.',
@@ -173,9 +205,9 @@ export const portfolioContent = {
     },
     {
       id: 'nutrisync',
-      number: '03',
+      number: '04',
       title: 'NutriSync',
-      eyebrow: 'REC // 03',
+      eyebrow: 'REC // 04',
       category: 'Reinforcement Learning Environment',
       whatItIs:
         'An OpenEnv-standardized Gym environment where reinforcement learning agents learn 4-meal dietary sequencing under strict non-linear penalties.',
@@ -194,27 +226,6 @@ export const portfolioContent = {
         { label: 'Code', url: 'https://github.com/sameerpandey17/NutriSync' },
       ],
       iconType: 'nutrisync',
-    },
-    {
-      id: 'package-scanner',
-      number: '04',
-      title: 'PackDrishti',
-      eyebrow: 'REC // 04',
-      category: 'Edge Inspection & Trust Registry',
-      whatItIs:
-        'An edge-assisted packaging verification system that cross-references barcode and label integrity against a crowd-validated public trust index.',
-      feature: {
-        heading: 'System Design',
-        body:
-          'A multi-stage pipeline where repeated barcode scans compute an authenticated Bayesian trust score across batch defect histories, syncing through a low-overhead REST backend to a real-time public transparency board.',
-      },
-      techStack: ['Android', 'REST API', 'PostgreSQL', 'FastAPI', 'Public Dashboard'],
-      howIMadeIt:
-        'A single scan can never give an accurate rating of product authenticity or batch quality — false positives happen constantly with damaged labels. I structured the trust metric to require 3-4 distinct multi-angle scans before updating the public brand registry, dampening single-scan variance and giving consumers a reliable score they can check in the aisle before paying.',
-      links: [
-        { label: 'Code', url: 'https://github.com/sameerpandey17/PackDrishti' },
-      ],
-      iconType: 'package-scanner',
     },
   ] as ProjectHighlight[],
 
@@ -269,6 +280,7 @@ export const portfolioContent = {
     location: 'Pune, Maharashtra, India',
     remote: 'Open to Remote Worldwide',
     socials: [
+      { label: 'Portfolio', url: '#hero', icon: 'portfolio' },
       { label: 'LinkedIn', url: 'https://www.linkedin.com/in/sameer-pandey17/', icon: 'linkedin' },
       { label: 'GitHub', url: 'https://github.com/sameerpandey17', icon: 'github' },
       { label: 'Email', url: 'mailto:sameerpandey17nov@gmail.com', icon: 'email' },

@@ -21,7 +21,7 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
     keywords: [
       'stack', 'tech', 'skills', 'technologies', 'tools', 'languages',
       'frameworks', 'python', 'fastapi', 'react', 'typescript', 'postgresql',
-      'redis', 'docker', 'frontend', 'backend'
+      'redis', 'docker', 'frontend', 'backend', 'langgraph', 'redux'
     ],
     phrases: [
       'what is your tech stack',
@@ -33,28 +33,29 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'what programming languages',
       'technical skills'
     ],
-    answer: "My core languages are Python, JavaScript, TypeScript, SQL, and C++. For frameworks and platforms, I build with FastAPI, React, Next.js, Redis Pub/Sub, and Docker Compose. I am currently sharpening high-recall RAG systems, vector databases, and advanced data structures & algorithms.\n\nAre you curious how he applies these in distributed pipelines, or looking for specific backend depth?"
+    answer: "My core languages & tools are Python, FastAPI, REST API, PostgreSQL, Git, Docker, Redis, SQLAlchemy, and SEO. On the frameworks and platforms side, I build with React, TypeScript, Redux Toolkit, LangGraph, Nginx, Docker Compose, WebSocket, and Redis Pub/Sub. I specialize in AI/ML integration, LLM agents, and system design, and I'm currently sharpening Data Structures & Algorithms."
   },
 
-  // 1b. RAG & Vector Databases
+  // 2. AIVOA Project (Lead Project)
   {
-    id: 'sharpening-rag',
-    topic: 'RAG & Vector Databases',
+    id: 'project-aivoa',
+    topic: 'AIVOA Project',
     keywords: [
-      'rag', 'vector database', 'vector databases', 'embeddings', 'retrieval',
-      'vector db', 'qdrant', 'chroma', 'milvus', 'pinecone', 'sharpening', 'currently sharpening'
+      'aivoa', 'deviation', 'qms', 'pharma', 'manufacturing', 'langgraph',
+      'groq', 'copilot', 'intake', 'deviation intake', 'quality management'
     ],
     phrases: [
-      'tell me about your rag work',
-      'what are you currently sharpening',
-      'what are you learning right now',
-      'do you know rag',
-      'vector databases experience'
+      'what is aivoa',
+      'tell me about aivoa',
+      'how does aivoa work',
+      'explain aivoa',
+      'pharma project',
+      'deviation copilot'
     ],
-    answer: "I am actively deepening my work in Retrieval-Augmented Generation (RAG) architectures and vector databases. This includes designing chunking strategies, dense & sparse hybrid retrieval, embedding models, and vector indexing benchmarks, alongside daily algorithmic problem-solving in data structures."
+    answer: "AIVOA is an AI-powered deviation intake & copilot for pharmaceutical manufacturing QMS (2026). Built with Python, FastAPI, LangGraph, Groq LLMs, React 18, and PostgreSQL/SQLite with Docker Compose, it lets QA teams log, edit, and question manufacturing deviations via chat or document ingestion (PDF, DOCX, XLSX, OCR). A LangGraph agent pipeline automates intent routing, entity extraction, Pydantic validation, and risk assessment."
   },
 
-  // 2. VisionLink Project
+  // 3. VisionLink Project
   {
     id: 'project-visionlink',
     topic: 'VisionLink Project',
@@ -69,10 +70,10 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'how does visionlink work',
       'explain visionlink'
     ],
-    answer: "VisionLink is a real-time computer vision streaming pipeline built with Python, FastAPI, WebSockets, OpenCV, and React. It decouples video ingestion from model inference using Redis Pub/Sub worker queues, achieving low-latency live bounding-box overlays and telemetry in an interactive web viewfinder.\n\nWant to know what the hardest part of building the WebRTC pipeline was, or curious about another project?"
+    answer: "VisionLink is a real-time computer vision streaming pipeline built with Python, FastAPI, WebSockets, OpenCV, and React. It decouples video ingestion from model inference using Redis Pub/Sub worker queues, achieving low-latency live bounding-box overlays and telemetry in an interactive web viewfinder."
   },
 
-  // 3. CaloRupee Project
+  // 4. CaloRupee Project
   {
     id: 'project-calorupee',
     topic: 'CaloRupee Project',
@@ -87,10 +88,10 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'how does calorupee work',
       'explain calorupee'
     ],
-    answer: "CaloRupee is a multimodal nutrition intelligence system tailored for Indian meals. Built with FastAPI, PostgreSQL, and Gemini Vision, it analyzes meal images to extract macronutrients and simultaneously estimates per-meal costs in Indian Rupees based on local grocery pricing.\n\nCurious how we achieved high OCR and segmentation accuracy across complex thalis, or want to explore NutriSync?"
+    answer: "CaloRupee is a multimodal nutrition intelligence system tailored for Indian meals. Built with FastAPI, PostgreSQL, and Gemini Vision, it analyzes meal images to extract macronutrients and simultaneously estimates per-meal costs in Indian Rupees based on local grocery pricing, featuring dual-provider failover for demo reliability."
   },
 
-  // 4. NutriSync Project
+  // 5. NutriSync Project
   {
     id: 'project-nutrisync',
     topic: 'NutriSync Project',
@@ -105,29 +106,186 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'how does nutrisync work',
       'explain nutrisync'
     ],
-    answer: "NutriSync is an OpenEnv-compliant Reinforcement Learning environment for personalized dietary optimization. Developed using Python, Gymnasium, and PyTorch, it features a 50-item Indian ingredient database and a 15-component reward function balancing caloric goals, glycemic load, micronutrients, and regional dietary constraints.\n\nInterested in how the custom reward engine was engineered, or should we look at VisionLink?"
+    answer: "NutriSync is an OpenEnv-compliant Reinforcement Learning environment for personalized dietary optimization. Developed using Python, Gymnasium, and PyTorch, it features a 50-item Indian ingredient database and a 15-component reward function balancing caloric goals, glycemic load, micronutrients, and regional dietary constraints with a hard kill-switch for allergen breaches."
   },
 
-  // 5. Package Scanner / PackDrishti Project
+  // 6. Personality: Pineapple on Pizza
   {
-    id: 'project-package-scanner',
-    topic: 'Package Scanner (PackDrishti) Project',
+    id: 'pineapple-pizza',
+    topic: 'Pineapple on Pizza Debate',
+    keywords: ['pineapple', 'pizza', 'pineapple on pizza', 'hawaiian', 'toppings'],
+    phrases: [
+      'pineapple on pizza',
+      'do you like pineapple on pizza',
+      'pineapple pizza',
+      'pineapple on pizza yes or no',
+      'opinion on pineapple pizza'
+    ],
+    answer: "Yes — and I'll defend it with the same logic as my AI provider failover: redundancy and variety beat a single point of failure. A pizza with only savory toppings has no graceful degradation when you want something different halfway through the slice."
+  },
+
+  // 7. Personality: Villain Origin Story
+  {
+    id: 'villain-origin',
+    topic: 'Villain Origin Story & Traumatizing Outage',
+    keywords: ['villain', 'origin story', 'traumatized', 'trauma', 'worst outage', 'worst bug', 'outage', 'failover origin'],
+    phrases: [
+      'what is your villain origin story',
+      'what is your villain origin',
+      'what bug traumatized you',
+      'worst outage you had',
+      'villain origin'
+    ],
+    answer: "The first time I pushed something live and watched a \"100% uptime\" claim get tested in real time by an AI provider going down mid-demo. That's exactly why CaloRupee has automatic failover between two AI providers now — I don't get surprised by the same outage twice."
+  },
+
+  // 8. Personality: If Your Code Could Talk
+  {
+    id: 'code-personality',
+    topic: 'If Your Code Could Talk',
+    keywords: ['code talk', 'code could talk', 'code personality', 'what would your code say', 'what does your code say'],
+    phrases: [
+      'if your code could talk what would it say',
+      'if your code could talk',
+      'what would your code say about you',
+      'code personality'
+    ],
+    answer: "\"He really likes Docker Compose and he will find a way to add Redis to something that didn't need Redis.\" Also probably \"why does every project have a failover system, does he not trust anything.\""
+  },
+
+  // 9. Work Culture: Team Culture
+  {
+    id: 'team-culture',
+    topic: 'Ideal Team Culture',
+    keywords: ['culture', 'team culture', 'thrive', 'work environment', 'ideal team', 'team style'],
+    phrases: [
+      'what team culture do you thrive in',
+      'what team culture does he thrive in',
+      'what kind of team do you like',
+      'work culture preference',
+      'ideal team culture'
+    ],
+    answer: "Small, fast-moving teams where people actually ship instead of just planning to ship. I like environments where I can own a problem end-to-end — not just \"build the frontend\" but understand why the feature exists. I work well with people who'll tell me directly when something's wrong instead of being polite about it."
+  },
+
+  // 10. Low-Latency Pipeline Design
+  {
+    id: 'low-latency',
+    topic: 'Designing Low-Latency Pipelines',
+    keywords: ['low latency', 'low-latency', 'latency pipelines', 'design low latency', 'pubsub architecture'],
+    phrases: [
+      'how do you design low latency pipelines',
+      'how do you handle latency',
+      'low latency pipeline design',
+      'pipeline latency'
+    ],
+    answer: "I lean on pub/sub patterns instead of polling — VisionLink broadcasts processed frames to unlimited WebSocket clients through Redis Pub/Sub specifically so multiple workers can push updates without clients waiting on a request cycle. My instinct is to ask \"does this need to be synchronous?\" before optimizing anything — most latency problems are architecture problems wearing a performance costume."
+  },
+
+  // 11. Hardest Bug
+  {
+    id: 'hardest-bug',
+    topic: 'Hardest Bug Tracked Down',
+    keywords: ['hardest bug', 'toughest bug', 'difficult bug', 'race condition', 'hardest bug you had to track down'],
+    phrases: [
+      'what is the hardest bug you ever had to track down',
+      'what is the hardest bug you tracked down',
+      'hardest bug you solved',
+      'toughest bug'
+    ],
+    answer: "Honestly, race conditions in anything involving Redis Pub/Sub and multiple workers — the kind of bug that only shows up under load, works fine every time you're staring at it, and vanishes the moment you add a print statement."
+  },
+
+  // 12. Rebuild VisionLink
+  {
+    id: 'rebuild-visionlink',
+    topic: 'Rebuilding VisionLink From Scratch',
+    keywords: ['rebuild visionlink', 'visionlink differently', 'rebuild differently', 'visionlink scratch'],
+    phrases: [
+      'if you had to rebuild visionlink from scratch',
+      'what would you do differently in visionlink',
+      'rebuild visionlink'
+    ],
+    answer: "I'd probably reconsider the real-time architecture earlier instead of bolting on WebSocket scaling after the fact — I built the emotion detection first and the \"how do I broadcast this to unlimited clients\" problem second, when honestly that's the harder engineering problem and should've shaped the design from day one."
+  },
+
+  // 13. Uncertain Decision
+  {
+    id: 'uncertain-decision',
+    topic: 'Uncertain Technical Decision',
+    keywords: ['uncertain decision', 'not 100% sure', 'technical regret', 'tradeoff regret', 'dubious architecture'],
+    phrases: [
+      'what is a technical decision you made that you are still not 100% sure was right',
+      'technical decision you are not sure about',
+      'technical regrets',
+      'uncertain technical decision'
+    ],
+    answer: "Going with dual-mode persistence in AIVOA — PostgreSQL via Docker Compose with automatic SQLite fallback. It's genuinely useful for reliability, but it also means I maintain two code paths that need to behave identically, and I go back and forth on whether that complexity earns its keep."
+  },
+
+  // 14. Redis vs Database
+  {
+    id: 'redis-vs-db',
+    topic: 'When to Use Redis vs Database',
+    keywords: ['redis vs db', 'redis vs database', 'when to use redis', 'redis caching', 'polling vs pubsub'],
+    phrases: [
+      'how do you decide when to use redis vs database',
+      'redis vs db',
+      'when do you use redis',
+      'why use redis'
+    ],
+    answer: "If it's state that needs to fan out to multiple consumers in real time, it's Redis. If it's something one request needs once, it's the database. Redis Pub/Sub in VisionLink exists because the alternative — clients polling Postgres for new frames — would've been both slower and embarrassing."
+  },
+
+  // 15. Secretly Proud
+  {
+    id: 'secretly-proud',
+    topic: 'Secretly Most Proud Of',
+    keywords: ['secretly proud', 'most proud', 'proudest', 'secret pride', 'underappreciated feature'],
+    phrases: [
+      'what are you secretly most proud of',
+      'what is something you built that you are secretly proud of',
+      'proudest feature',
+      'secretly proud'
+    ],
+    answer: "The kill-switch logic in NutriSync's reward system — allergen use or a budget breach instantly zeros the score, no partial credit, no negotiating. It's a small design choice, but it's the part where I actually thought like a systems person instead of just a meal-planning app developer."
+  },
+
+  // 16. Weak Skill / Currently Sharpening
+  {
+    id: 'weak-skill',
+    topic: 'Weak Skill Actively Working On',
+    keywords: ['weakness', 'weak skill', 'weak', 'weaknesses', 'what are you bad at', 'sharpening', 'practicing dsa', 'dsa'],
+    phrases: [
+      'what is a skill you are weak at',
+      'what are you weak at',
+      'what is your weakness',
+      'what are you actively working on',
+      'what skill are you working on'
+    ],
+    answer: "Data Structures & Algorithms — it's literally on my resume as \"practicing\" because I'm not going to pretend otherwise. I can build and ship real systems, but I'm still closing the gap on the classic interview-style problem solving, and I'm doing it deliberately, not avoiding it."
+  },
+
+  // 17. Why Hire a Second-Year Student
+  {
+    id: 'why-hire',
+    topic: 'Value Proposition & Why Hire',
     keywords: [
-      'package scanner', 'packdrishti', 'pack drishti', 'drishti', 'barcode',
-      'ocr', 'yolov8', 'defect detection', 'industrial inspection', 'logistics'
+      'why hire', 'why should i hire you', 'why you', 'strengths', 'value',
+      'what makes you different', 'advantages', 'hire me', 'second year', 'second-year'
     ],
     phrases: [
-      'what is package scanner',
-      'tell me about package scanner',
-      'what is packdrishti',
-      'tell me about packdrishti',
-      'how does package scanner work',
-      'explain package scanner'
+      'why should i hire you',
+      'why should we hire you',
+      'why sameer',
+      'what makes you stand out',
+      'why hire a second year student',
+      'why hire a second-year'
     ],
-    answer: "Package Scanner (PackDrishti) is an automated edge computer vision system for industrial parcel inspection. It pairs OpenCV, YOLOv8, and FastAPI to achieve sub-100ms barcode decode, optical character verification against shipping manifests, and automated package surface defect detection.\n\nWant to hear how it maintains 30+ FPS on edge hardware, or what tech stack he uses day-to-day?"
+    answer: "Because I'm not asking you to imagine what I could build — I've already built four production-shaped systems with authentication, failover, Docker orchestration, and real architecture decisions behind them, as a second-year. Give me two more years and an actual team around me and think about where that curve goes."
   },
 
-  // 6. Education / Year / CGPA
+  // 18. Education / Year / CGPA
   {
     id: 'education',
     topic: 'Education, University & Academic Standing',
@@ -145,10 +303,10 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'tell me about your education',
       'educational background'
     ],
-    answer: "I am currently a second-year B.E. student majoring in Artificial Intelligence & Data Science at Dr. D. Y. Patil Institute of Technology in Pune (Sep 2025–Present). I completed my first year with an 8.71 CGPA (High Distinction).\n\nWould you like to hear about his hackathon projects or what engineering roles he's targeting next?"
+    answer: "I am currently a second-year B.E. student majoring in Artificial Intelligence & Data Science at Dr. D. Y. Patil Institute of Technology in Pune (Sep 2025–Present). I completed my first year with an 8.71 CGPA (High Distinction)."
   },
 
-  // 7. Availability / Internship Status
+  // 19. Availability / Internship Status
   {
     id: 'availability',
     topic: 'Internship Availability & Work Status',
@@ -165,16 +323,16 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'are you open to relocate',
       'when can you start'
     ],
-    answer: "I am actively seeking AI Engineering, Backend Development, or Full-Stack Developer internship opportunities. I am open to remote roles globally, as well as on-site roles in Pune, Bangalore, Mumbai, and other major tech hubs.\n\nDo you have a specific role or team in mind, or want his direct contact details?"
+    answer: "I am actively seeking AI Engineering, Backend Development, or Full-Stack Developer internship opportunities. I am open to remote roles globally, as well as on-site roles in Pune, Bangalore, Mumbai, and other major tech hubs."
   },
 
-  // 8. Contact Information
+  // 20. Contact Information
   {
     id: 'contact',
     topic: 'Contact Info & Links',
     keywords: [
       'contact', 'email', 'phone', 'reach', 'get in touch', 'linkedin',
-      'github', 'resume', 'call', 'message', 'address'
+      'github', 'resume', 'call', 'message', 'address', 'portfolio'
     ],
     phrases: [
       'how can i contact you',
@@ -186,75 +344,5 @@ export const KNOWLEDGE_BASE: KnowledgeEntry[] = [
       'linkedin profile'
     ],
     answer: "You can reach me directly via email at sameerpandey17nov@gmail.com or by phone at +91 6204570289. You can also explore my code on GitHub (https://github.com/sameerpandey17) and connect on LinkedIn (https://www.linkedin.com/in/sameer-pandey17/)."
-  },
-
-  // 9. Hackathons & Milestones
-  {
-    id: 'achievements',
-    topic: 'Hackathons & Recognitions',
-    keywords: [
-      'hackathon', 'hackathons', 'awards', 'achievements', 'competition',
-      'won', 'win', 'recognition', 'milestones', 'timeline'
-    ],
-    phrases: [
-      'have you won any hackathons',
-      'tell me about your achievements',
-      'what competitions have you won',
-      'hackathon wins',
-      'key milestones'
-    ],
-    answer: "I've competed in and placed in regional hackathons building real-time vision pipelines and automated inspection tools. These milestones demonstrate my ability to rapidly architect, test, and ship working prototypes under tight constraints."
-  },
-
-  // 10. Why Should I Hire You?
-  {
-    id: 'why-hire',
-    topic: 'Value Proposition & Why Hire',
-    keywords: [
-      'why hire', 'why should i hire you', 'why you', 'strengths', 'value',
-      'what makes you different', 'advantages', 'hire me'
-    ],
-    phrases: [
-      'why should i hire you',
-      'why should we hire you',
-      'why sameer',
-      'what makes you stand out',
-      'what is your value proposition'
-    ],
-    answer: "I don't just build UI wrappers or simple CRUD forms — I build the foundational infrastructure behind AI products: real-time streaming pipelines, async message queues, custom RL training environments, and polished frontend interfaces. I bring deep architectural curiosity, production discipline, and speed to every team I join.\n\nWhat kind of engineering challenges is your team currently tackling?"
-  },
-
-  // 11. What Do You Like Building?
-  {
-    id: 'what-like-building',
-    topic: 'Interests & What Excites Him',
-    keywords: [
-      'like building', 'passionate', 'interests', 'what excites you',
-      'enjoy', 'favorite', 'culture fit', 'philosophy'
-    ],
-    phrases: [
-      'what do you like building',
-      'what kind of projects do you enjoy',
-      'what are you passionate about',
-      'what is your engineering philosophy'
-    ],
-    answer: "I'm most excited by systems where AI meets low-latency production engineering: event-driven backends, computer vision pipelines running over WebSockets, and developer tooling. I love the challenge of taking an ML model from an isolated notebook into an observable, scalable system."
-  },
-
-  // 12. What Are You Learning Now?
-  {
-    id: 'learning-now',
-    topic: 'Current Studies & Next Technologies',
-    keywords: [
-      'learning', 'currently learning', 'sharpening', 'studying',
-      'next', 'future', 'what are you learning now'
-    ],
-    phrases: [
-      'what are you learning now',
-      'what are you currently studying',
-      'what skills are you sharpening',
-      'whats next for you'
-    ],
-    answer: "Right now I'm deepening my skills in distributed systems architecture, WebGPU shaders for high-performance in-browser rendering, and formal RL evaluation benchmark frameworks with Gymnasium and OpenEnv."
   }
 ];

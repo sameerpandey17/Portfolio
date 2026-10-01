@@ -57,20 +57,23 @@ const projects = [
     `
   },
   {
-    name: 'package-scanner',
-    title: 'PACKAGE SCANNER // AUTOMATED LOGISTICS OCR',
+    name: 'aivoa',
+    title: 'AIVOA // AI DEVIATION INTAKE &amp; COPILOT',
     iconSvg: `
-      <!-- Isometric Package with Barcode Beam -->
-      <polygon points="640,260 760,325 640,390 520,325" fill="#24449D" stroke="#F0E9DD" stroke-width="5" />
-      <polygon points="520,325 640,390 640,510 520,445" fill="#182E6E" stroke="#F0E9DD" stroke-width="5" />
-      <polygon points="640,390 760,325 760,445 640,510" fill="#14265C" stroke="#F0E9DD" stroke-width="5" />
-      <!-- Scanning laser beam line -->
-      <line x1="490" y1="360" x2="790" y2="360" stroke="#E5484D" stroke-width="5" stroke-linecap="round" />
-      <!-- Barcode lines -->
-      <line x1="560" y1="390" x2="560" y2="430" stroke="#F0E9DD" stroke-width="3" />
-      <line x1="570" y1="395" x2="570" y2="435" stroke="#F0E9DD" stroke-width="5" />
-      <line x1="585" y1="400" x2="585" y2="440" stroke="#F0E9DD" stroke-width="2" />
-      <line x1="595" y1="405" x2="595" y2="445" stroke="#F0E9DD" stroke-width="4" />
+      <!-- QMS Document Shield with Agent Flow Graph -->
+      <polygon points="640,240 760,280 760,440 640,520 520,440 520,280" fill="#182E6E" stroke="#F0E9DD" stroke-width="6" stroke-linejoin="round" />
+      <polygon points="640,270 730,300 730,420 640,480 550,420 550,300" fill="none" stroke="#E5484D" stroke-width="4" stroke-linejoin="round" />
+      <!-- Workflow nodes: Router -> Extract -> Validate -> Diff -->
+      <circle cx="640" cy="330" r="18" fill="#E5484D" />
+      <circle cx="590" cy="390" r="14" fill="#F0E9DD" />
+      <circle cx="690" cy="390" r="14" fill="#F0E9DD" />
+      <circle cx="640" cy="445" r="14" fill="#F0E9DD" />
+      <line x1="640" y1="348" x2="590" y2="376" stroke="#F0E9DD" stroke-width="3" />
+      <line x1="640" y1="348" x2="690" y2="376" stroke="#F0E9DD" stroke-width="3" />
+      <line x1="590" y1="404" x2="640" y2="431" stroke="#F0E9DD" stroke-width="3" />
+      <line x1="690" y1="404" x2="640" y2="431" stroke="#F0E9DD" stroke-width="3" />
+      <!-- Checkmark in center -->
+      <polyline points="633,330 638,335 648,324" fill="none" stroke="#F0E9DD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
     `
   }
 ];

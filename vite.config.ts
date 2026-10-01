@@ -2,6 +2,8 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
 
+import { SYSTEM_PROMPT } from './src/chatbot/context';
+
 function localChatApiPlugin() {
   return {
     name: 'local-chat-api',
@@ -26,7 +28,7 @@ function localChatApiPlugin() {
             if (!apiKey) {
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({
-                response: "I'm currently in local preview mode without a configured GROQ_API_KEY. Once deployed to Netlify (or when GROQ_API_KEY is placed in .env), I will run on Groq Llama 3.3 70B! Feel free to test Layer 1 instant questions like 'What is his tech stack?' or 'Tell me about NutriSync'.",
+                response: "I'm currently in local preview mode without a configured GROQ_API_KEY. Once deployed to Netlify or Vercel (or when GROQ_API_KEY is placed in .env), I will run on Groq Llama 3.3 70B! Feel free to test Layer 1 instant questions like 'What is his tech stack?', 'Tell me about AIVOA', or 'Pineapple on pizza?'.",
                 source: 'preview_fallback',
               }));
               return;
@@ -43,7 +45,7 @@ function localChatApiPlugin() {
                 messages: [
                   {
                     role: 'system',
-                    content: "You are Sameer Pandey's personal portfolio assistant and digital representative. Answer concisely (2-4 sentences) using his profile, education (2nd-year B.E. at DY Patil Pune, 8.71 CGPA), skills (Python, FastAPI, React, TypeScript, RL, Computer Vision), and projects (VisionLink, CaloRupee, NutriSync, PackDrishti)."
+                    content: SYSTEM_PROMPT,
                   },
                   ...(Array.isArray(conversationHistory) ? conversationHistory.slice(-4) : []),
                   { role: 'user', content: message },

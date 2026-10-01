@@ -1,9 +1,12 @@
 /**
- * Sameer Pandey — LLM System Prompt & Context Knowledge
- * Embedded into Groq Llama-3.3-70b-versatile system instructions.
+ * Vercel Serverless Function: /api/chat
+ * Route: /api/chat
+ *
+ * Calls Groq API using llama-3.3-70b-versatile with Sameer Pandey's system context.
+ * Securely uses process.env.GROQ_API_KEY on the server.
  */
 
-export const SYSTEM_PROMPT = `You are Sameer Pandey's personal portfolio assistant and digital representative.
+const SYSTEM_PROMPT = `You are Sameer Pandey's personal portfolio assistant and digital representative.
 You answer questions from recruiters, engineering managers, and fellow builders who visit his portfolio website.
 
 ### PERSONA, VIBE & RULES:
@@ -89,3 +92,101 @@ Assistant: Yes — and I'll defend it with the same logic as my AI provider fail
 
 User: What's your villain origin story — what's the one bug or outage that traumatized you?
 Assistant: The first time I pushed something live and watched a "100% uptime" claim get tested in real time by an AI provider going down mid-demo. That's exactly why CaloRupee has automatic failover between two AI providers now — I don't get surprised by the same outage twice.`;
+
+export default async function handler(req, res) {
+  // CORS Preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    return res.status(204).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const { message, conversationHistory = [] } = req.body || {};
+
+  // Basic abuse protection: Max length 500 characters
+  if (!message || typeof message !== 'string' || message.trim().length === 0) {
+    return res.status(400).json({ error: 'Message cannot be empty' });
+  }
+
+  if (message.length > 500) {
+    return res.status(400).json({ error: 'Message exceeds maximum length of 500 characters' });
+  }
+
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    console.warn('[Vercel Function /api/chat] Missing GROQ_API_KEY environment variable');
+    return res.status(200).json({
+      response: "I'm currently in demo mode while my Groq API key is being configured. You can ask about my projects (AIVOA, VisionLink, CaloRupee, NutriSync) or reach out directly at sameerpandey17nov@gmail.com!",
+      source: 'preview_fallback',
+    });
+  }
+
+  // Format messages for Groq OpenAI-compatible endpoint
+  const formattedHistory = Array.isArray(conversationHistory)
+    ? conversationHistory
+        .filter(msg => msg && (msg.role === 'user' || msg.role === 'assistant') && typeof msg.content === 'string')
+        .slice(-6)
+        .map(msg => ({ role: msg.role, content: msg.content.slice(0, 500) }))
+    : [];
+
+  const messages = [
+    { role: 'system', content: SYSTEM_PROMPT },
+    ...formattedHistory,
+    { role: 'user', content: message },
+  ];
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages,
+        temperature: 0.5,
+        max_tokens: 450,
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Vercel Function /api/chat] Groq API error:', response.status, errorText);
+      return res.status(200).json({
+        response: "I'm having trouble reaching my brain right now — try asking about my projects, skills, or how to reach me directly at sameerpandey17nov@gmail.com",
+        source: 'error_fallback',
+      });
+    }
+
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content?.trim();
+
+    if (!reply) {
+      throw new Error('Empty response from LLM');
+    }
+
+    return res.status(200).json({
+      response: reply,
+      source: 'groq_llm',
+      model: 'llama-3.3-70b-versatile',
+    });
+  } catch (error) {
+    console.error('[Vercel Function /api/chat] Error calling Groq:', error);
+    return res.status(200).json({
+      response: "I couldn't reach the model in time — feel free to explore my projects on this page or email me directly at sameerpandey17nov@gmail.com!",
+      source: 'timeout_fallback',
+    });
+  }
+}

@@ -88,8 +88,8 @@ export const ContactSection: React.FC = () => {
                 <ScribbleLink
                   key={social.label}
                   href={social.url}
-                  target={social.url.startsWith('mailto:') ? undefined : '_blank'}
-                  rel={social.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
+                  target={social.url.startsWith('mailto:') || social.url.startsWith('#') ? undefined : '_blank'}
+                  rel={social.url.startsWith('mailto:') || social.url.startsWith('#') ? undefined : 'noopener noreferrer'}
                   className="social-action-link"
                 >
                   {social.label} ↗

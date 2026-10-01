@@ -9,10 +9,10 @@ import { MorphImage } from './morph-image.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const PROJECT_IMAGES = [
+  '/assets/projects/aivoa.webp',
   '/assets/projects/visionlink.webp',
   '/assets/projects/calorupee.webp',
   '/assets/projects/nutrisync.webp',
-  '/assets/projects/package-scanner.webp',
 ];
 
 interface ProjectsHorizontalProps {
